@@ -255,6 +255,10 @@ test("keeps the main thread responsive while inspecting 32 MiB", async ({
     contentType: "application/json",
   });
 
+  console.log(
+    `[${testInfo.project.name}] 32 MiB worker inspection: ${metrics.durationMs.toFixed(1)} ms, main-thread ticks: ${metrics.ticks}`,
+  );
+
   expect(metrics.width).toBe(640);
   expect(metrics.height).toBe(480);
   expect(metrics.size).toBeGreaterThan(32 * 1024 * 1024);
