@@ -105,22 +105,50 @@ button:disabled {
 }
 
 .brand-mark {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   display: grid;
   place-items: center;
-  border: 1px solid var(--line-strong);
-  border-radius: 9px;
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), transparent);
-  color: var(--accent);
-  font: 700 12px/1 ui-monospace, "SFMono-Regular", Consolas, monospace;
-  letter-spacing: -0.04em;
+  overflow: hidden;
+}
+
+.brand-mark img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+.brand-copy {
+  min-width: 0;
+}
+
+.brand-title-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
 }
 
 .brand-name {
   font-size: 14px;
   font-weight: 650;
   letter-spacing: -0.01em;
+}
+
+.beta-badge {
+  height: 18px;
+  padding: 0 7px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(255, 0, 20, 0.48);
+  border-radius: 999px;
+  background: rgba(255, 0, 20, 0.12);
+  color: #ff3345;
+  font: 700 8px/1 ui-monospace, "SFMono-Regular", Consolas, monospace;
+  letter-spacing: 0.09em;
+  white-space: nowrap;
+  box-shadow: 0 0 18px rgba(255, 0, 20, 0.08);
 }
 
 .brand-subline,

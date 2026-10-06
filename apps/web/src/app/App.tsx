@@ -11,6 +11,7 @@ import { DataStream } from "../features/inspection/components/DataStream.js";
 import { InspectorPanel } from "../features/inspection/components/InspectorPanel.js";
 import { SourcePanel } from "../features/inspection/components/SourcePanel.js";
 import type { InspectorTab } from "../features/inspection/components/InspectorPanel.js";
+import pfxLogo from "../assets/pfx-logo.svg";
 import "./app.css";
 
 const ACCEPTED_TYPES =
@@ -138,10 +139,13 @@ export function App() {
       <header className="tool-header">
         <div className="brand-lockup">
           <div className="brand-mark" aria-hidden="true">
-            PFx
+            <img src={pfxLogo} alt="" />
           </div>
-          <div>
-            <div className="brand-name">Image Inspector</div>
+          <div className="brand-copy">
+            <div className="brand-title-row">
+              <div className="brand-name">pfx image inspector</div>
+              <span className="beta-badge">BETA 0.1</span>
+            </div>
             <div className="brand-subline">LOCAL IMAGE ANALYSIS</div>
           </div>
         </div>
