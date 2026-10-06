@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 
-export default defineConfig({
-  base: process.env.PFX_PUBLIC_BASE ?? "/",
+export default defineConfig(({ command }) => ({
+  base: command === "build" ? "/pfx-image-inspector/" : "/",
   optimizeDeps: {
     include: ["@pfx/metadata-core"],
   },
@@ -11,4 +11,4 @@ export default defineConfig({
   worker: {
     format: "es",
   },
-});
+}));
