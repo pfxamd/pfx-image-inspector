@@ -30,12 +30,14 @@ export function useInspectionSession(
   createService: () => InspectionService = () => new MetadataWorkerClient(),
 ) {
   const serviceRef = useRef<InspectionService | null>(null);
+  const serviceFactoryRef = useRef(createService);
   const abortRef = useRef<AbortController | null>(null);
   const [state, setState] = useState<InspectionSessionState>(INITIAL_STATE);
 
-  if (serviceRef.current === null) {
-    serviceRef.current = createService();
-  }
+  const getService = useCallback((): InspectionService => {
+    serviceRef.current ??= serviceFactoryRef.current();
+    return serviceRef.current;
+  }, []);
 
   const inspect = useCallback(
     async (
@@ -55,7 +57,7 @@ export function useInspectionSession(
       });
 
       try {
-        const result = await serviceRef.current!.inspect(file, {
+        const result = await getService().inspect(file, {
           ...options,
           signal: controller.signal,
         });
@@ -79,7 +81,7 @@ export function useInspectionSession(
         });
       }
     },
-    [],
+    [getService],
   );
 
   const cancel = useCallback(() => {
