@@ -1,3 +1,4 @@
+import { analyzeIntegrity } from "./analysis/integrity/analyze-integrity.js";
 import { analyzePrivacy } from "./analysis/privacy/analyze-privacy.js";
 import { defaultAdapterRegistry } from "./adapters/default-registry.js";
 import type { InspectionContext } from "./adapters/adapter.js";
@@ -74,10 +75,17 @@ export async function inspectImage(
           status: "not_analyzed",
           findings: [],
         },
-    integrity: {
-      status: "not_analyzed",
-      findings: [],
-    },
+    integrity: resolved.analyzeIntegrity
+      ? analyzeIntegrity({
+          image: canonical.image,
+          location: canonical.location,
+          timestamps: canonical.timestamps,
+          metadata: canonical.metadata,
+        })
+      : {
+          status: "not_analyzed",
+          findings: [],
+        },
     standards: canonical.standards,
     provenance: {
       c2pa: {
