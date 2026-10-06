@@ -4,11 +4,18 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "jsx": "react-jsx",
-    "baseUrl": ".",
     "paths": {
-      "@pfx/metadata-core": ["../../packages/metadata-core/src/index.ts"]
+      "@pfx/metadata-core": [
+        "../../packages/metadata-core/src/index.ts"
+      ]
     },
-    "types": ["vite/client"]
+    "types": [
+      "vite/client"
+    ]
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "vite.config.ts"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "vite.config.ts"
+  ]
 }
