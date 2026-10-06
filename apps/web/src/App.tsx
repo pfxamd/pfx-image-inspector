@@ -1,3 +1,1 @@
-export function App() {
-  return null;
-}
+export { App } from "./app/App.js";

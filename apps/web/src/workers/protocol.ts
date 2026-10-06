@@ -1,7 +1,7 @@
 import type {
   ImageInspectionResult,
   InspectOptions,
-} from "@pfx/metadata-core";
+} from "../contracts/inspection.js";
 
 export type WorkerInspectOptions = Omit<InspectOptions, "signal">;
 export type WorkerImageInput = Blob | ArrayBuffer;

@@ -19,7 +19,8 @@
     "corpus:compare": "node scripts/corpus/compare.mjs",
     "corpus": "pnpm corpus:fetch && pnpm build && pnpm corpus:reference && pnpm corpus:compare",
     "test:browser": "playwright test -c playwright.config.ts",
-    "test:browser:headed": "playwright test -c playwright.config.ts --headed"
+    "test:browser:headed": "playwright test -c playwright.config.ts --headed",
+    "check:web-boundaries": "node scripts/check-web-boundaries.mjs"
   },
   "devDependencies": {
     "eslint": "^10.10.0",

@@ -1,13 +1,11 @@
-import {
-  INSPECTION_ERROR_CODES,
-  InspectionError,
-} from "@pfx/metadata-core";
 import type {
   ImageInput,
   ImageInspectionResult,
   InspectOptions,
   InspectionErrorCode,
-} from "@pfx/metadata-core";
+} from "../contracts/inspection.js";
+import type { InspectionService } from "./inspection-service.js";
+import { WorkerInspectionError } from "./worker-inspection-error.js";
 import type {
   MetadataWorkerRequest,
   MetadataWorkerResponse,
@@ -24,7 +22,7 @@ interface PendingInspection {
 
 export type MetadataWorkerFactory = () => Worker;
 
-export class MetadataWorkerClient {
+export class MetadataWorkerClient implements InspectionService {
   readonly #worker: Worker;
   readonly #pending = new Map<string, PendingInspection>();
   #sequence = 0;
@@ -44,7 +42,7 @@ export class MetadataWorkerClient {
   ): Promise<ImageInspectionResult> {
     if (this.#disposed) {
       return Promise.reject(
-        new Error("Metadata worker client has been disposed."),
+        new WorkerInspectionError("Metadata worker client has been disposed."),
       );
     }
 
@@ -142,7 +140,7 @@ export class MetadataWorkerClient {
   };
 
   #handleWorkerError = (event: ErrorEvent): void => {
-    const error = new Error(
+    const error = new WorkerInspectionError(
       event.message || "Metadata worker encountered an unrecoverable error.",
     );
 
@@ -206,26 +204,32 @@ function prepareInput(input: ImageInput): {
   };
 }
 
-function deserializeError(error: SerializedWorkerError): Error {
-  if (isInspectionErrorCode(error.code)) {
-    return new InspectionError(error.code, error.message);
-  }
-
-  const deserialized = new Error(error.message);
-  deserialized.name = error.name;
-  return deserialized;
+function deserializeError(error: SerializedWorkerError): WorkerInspectionError {
+  return new WorkerInspectionError(error.message, {
+    name: error.name,
+    code: isInspectionErrorCode(error.code) ? error.code : undefined,
+  });
 }
 
 function isInspectionErrorCode(
   value: string | undefined,
 ): value is InspectionErrorCode {
-  if (value === undefined) return false;
-
-  return (Object.values(INSPECTION_ERROR_CODES) as string[]).includes(value);
+  return (
+    value === "INVALID_INPUT" ||
+    value === "UNSUPPORTED_FORMAT" ||
+    value === "FILE_READ_FAILED" ||
+    value === "CORRUPTED_METADATA" ||
+    value === "PARSER_FAILED" ||
+    value === "UNSUPPORTED_METADATA_BLOCK" ||
+    value === "ABORTED"
+  );
 }
 
 function abortedError(
   message = "Image inspection was aborted.",
-): InspectionError {
-  return new InspectionError(INSPECTION_ERROR_CODES.ABORTED, message);
+): WorkerInspectionError {
+  return new WorkerInspectionError(message, {
+    name: "InspectionError",
+    code: "ABORTED",
+  });
 }
