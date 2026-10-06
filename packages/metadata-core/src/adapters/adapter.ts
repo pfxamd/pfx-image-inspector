@@ -1,6 +1,7 @@
 import type { ImageFormat, InspectionWarning } from "../model/public.js";
 
 export type MetadataBlockKey = "exif" | "xmp" | "iptc" | "icc" | "jfif";
+export type AdapterState = "success" | "partial" | "failed";
 
 export type SourceBlockKey =
   | "image"
@@ -22,8 +23,9 @@ export interface InspectionContext {
 
 export interface AdapterExtractionResult {
   adapterId: string;
-  state: "success" | "partial" | "failed";
+  state: AdapterState;
   capabilities: MetadataCapabilities;
+  blockStates?: Partial<Record<MetadataBlockKey, AdapterState>>;
   sources: Partial<Record<SourceBlockKey, Record<string, unknown>>>;
   raw: Record<string, unknown>;
   warnings: InspectionWarning[];

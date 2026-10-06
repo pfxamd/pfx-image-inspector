@@ -95,9 +95,12 @@ function resolveStatus(
   const supporting = results.filter((result) => result.capabilities[key]);
   if (supporting.length === 0) return "unsupported";
 
-  const hasSuccess = supporting.some((result) => result.state === "success");
-  const hasPartial = supporting.some((result) => result.state === "partial");
-  const hasFailure = supporting.some((result) => result.state === "failed");
+  const states = supporting.map(
+    (result) => result.blockStates?.[key] ?? result.state,
+  );
+  const hasSuccess = states.includes("success");
+  const hasPartial = states.includes("partial");
+  const hasFailure = states.includes("failed");
 
   if (Object.keys(entries).length > 0) {
     return hasPartial || hasFailure ? "partial" : "present";
@@ -163,7 +166,7 @@ function normalizeLocation(source: Record<string, unknown>): LocationInfo | null
 
 function normalizeColor(source: Record<string, unknown>): ColorInfo | null {
   const color: ColorInfo = {
-    colorSpace: findDeepString(source, ["ColorSpace"]),
+    colorSpace: findDeepString(source, ["ColorSpace", "ColorSpaceData"]),
     profileName: findDeepString(source, [
       "ProfileDescription",
       "ProfileName",

@@ -22,9 +22,10 @@ The current default adapter is `exifr`, selected because it is browser-capable,
 dependency-free at runtime, MIT-licensed, and supports EXIF/TIFF, GPS, XMP, IPTC,
 ICC, JFIF and modern HEIF-family inputs where applicable.
 
-WebP format detection already exists, but the current `exifr` adapter is not
-registered for WebP. A separate parser can be added without changing
-`inspectImage()`.
+WebP uses a native PFx container adapter. It validates RIFF chunk boundaries,
+reads VP8X/VP8/VP8L dimensions, extracts EXIF/XMP/ICCP chunks, parses ICC and
+common XMP properties internally, and delegates only the embedded TIFF/EXIF
+payload to the existing EXIF parser boundary.
 
 ## Canonical model
 
@@ -58,7 +59,8 @@ The implementation now includes:
 - input normalization
 - magic-byte format detection
 - adapter registry
-- exifr adapter
+- exifr adapter for supported image containers
+- native WebP RIFF metadata adapter
 - canonical metadata normalization
 - structured metadata statuses
 - standards detection with embedded version evidence where available
