@@ -89,6 +89,20 @@ for (const sample of manifest.samples) {
 
       if (expectedPresent || actualPresent) {
         fields.push({ name, status });
+
+        if (
+          process.env.CORPUS_DEBUG_VALUES === "1" &&
+          (status === "missing" || status === "mismatch")
+        ) {
+          console.log(
+            JSON.stringify({
+              debugSample: sample.id,
+              field: name,
+              expected,
+              actual,
+            }),
+          );
+        }
       }
     }
 
