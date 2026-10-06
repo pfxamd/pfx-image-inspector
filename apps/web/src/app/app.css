@@ -1,6 +1,5 @@
 :root {
-  font-family:
-    Inter, "SF Pro Display", "Segoe UI", system-ui, -apple-system, sans-serif;
+
   font-synthesis: none;
   text-rendering: geometricPrecision;
   --source-width: 260px;
@@ -108,7 +107,7 @@ body {
 
 button,
 input {
-  font: inherit;
+
 }
 
 button {
@@ -197,9 +196,7 @@ button:disabled {
 }
 
 .brand-name {
-  font-size: 14px;
-  font-weight: 650;
-  letter-spacing: -0.01em;
+
 }
 
 .beta-badge {
@@ -211,8 +208,7 @@ button:disabled {
   border-radius: 999px;
   background: rgba(255, 0, 20, 0.12);
   color: #ff3345;
-  font: 700 8px/1 ui-monospace, "SFMono-Regular", Consolas, monospace;
-  letter-spacing: 0.09em;
+
   white-space: nowrap;
   box-shadow: 0 0 18px rgba(255, 0, 20, 0.08);
 }
@@ -225,9 +221,7 @@ button:disabled {
 .coordinate-field span,
 .metadata-table__header,
 .reading-copy > span {
-  font: 600 9px/1.2 ui-monospace, "SFMono-Regular", Consolas, monospace;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
+
 }
 
 .brand-subline {
@@ -251,8 +245,7 @@ button:disabled {
   border-radius: 8px;
   background: var(--fill-soft);
   color: var(--muted);
-  font: 650 8px/1 ui-monospace, "SFMono-Regular", Consolas, monospace;
-  letter-spacing: 0.09em;
+
   cursor: pointer;
   transition:
     color 160ms ease,
@@ -276,8 +269,7 @@ button:disabled {
   border: 1px solid var(--line);
   border-radius: 50%;
   color: var(--accent);
-  font-size: 11px;
-  line-height: 1;
+
 }
 
 .runtime-state {
@@ -318,8 +310,7 @@ button:disabled {
   border-radius: 8px;
   background: var(--fill-soft);
   color: var(--text-soft);
-  font-size: 11px;
-  font-weight: 600;
+
   cursor: pointer;
   transition:
     border-color 160ms ease,
@@ -463,14 +454,12 @@ button:disabled {
 
 .source-empty strong,
 .source-preview__fallback span {
-  font: 600 10px/1 ui-monospace, "SFMono-Regular", Consolas, monospace;
-  letter-spacing: 0.12em;
+
 }
 
 .source-empty small,
 .source-preview__fallback small {
-  font: 500 8px/1 ui-monospace, "SFMono-Regular", Consolas, monospace;
-  letter-spacing: 0.1em;
+
 }
 
 .source-empty__cross {
@@ -527,8 +516,7 @@ button:disabled {
   background: var(--surface-overlay);
   border: 1px solid rgba(var(--accent-rgb), 0.28);
   color: var(--accent);
-  font: 600 7px/1 ui-monospace, "SFMono-Regular", Consolas, monospace;
-  letter-spacing: 0.11em;
+
 }
 
 .source-readout {
@@ -540,8 +528,7 @@ button:disabled {
 .source-readout__name {
   overflow: hidden;
   color: var(--text-medium);
-  font-size: 11px;
-  font-weight: 620;
+
   white-space: nowrap;
   text-overflow: ellipsis;
 }
@@ -551,7 +538,7 @@ button:disabled {
   gap: 8px;
   margin-top: 7px;
   color: var(--muted-2);
-  font: 500 8px/1 ui-monospace, "SFMono-Regular", Consolas, monospace;
+
 }
 
 .source-readout__meta span + span::before {
@@ -581,7 +568,7 @@ button:disabled {
   border-radius: 7px;
   background: rgba(255, 255, 255, 0.028);
   color: var(--text-soft);
-  font-size: 10px;
+
   cursor: pointer;
   transition:
     background 150ms ease,
@@ -610,7 +597,7 @@ button:disabled {
   border-radius: 5px;
   background: var(--surface-kbd);
   color: var(--muted-2);
-  font: 500 8px/1 ui-monospace, "SFMono-Regular", Consolas, monospace;
+
 }
 
 .operation-button--quiet {
@@ -628,7 +615,7 @@ button:disabled {
 
 .source-foot strong {
   color: var(--accent);
-  font-weight: 600;
+
 }
 
 .inspector {
@@ -697,16 +684,13 @@ button:disabled {
   align-items: baseline;
   gap: 10px;
   color: var(--muted-2);
-  font: 600 8px/1 ui-monospace, "SFMono-Regular", Consolas, monospace;
-  letter-spacing: 0.11em;
+
 }
 
 .inspector-topbar__active strong {
   overflow: hidden;
   color: var(--text-medium);
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+
   white-space: nowrap;
   text-overflow: ellipsis;
 }
@@ -721,8 +705,7 @@ button:disabled {
 .inspector-sections__label {
   padding: 3px 7px 11px;
   color: var(--muted-2);
-  font: 600 8px/1 ui-monospace, "SFMono-Regular", Consolas, monospace;
-  letter-spacing: 0.13em;
+
 }
 
 .inspector-sections__list {
@@ -743,7 +726,7 @@ button:disabled {
   border-radius: 6px;
   background: transparent;
   color: var(--muted);
-  font-size: 9px;
+
   text-align: left;
   cursor: pointer;
   transition:
@@ -755,8 +738,7 @@ button:disabled {
 
 .inspector-sections button small {
   color: var(--muted-3);
-  font: 600 7px/1 ui-monospace, "SFMono-Regular", Consolas, monospace;
-  letter-spacing: 0.06em;
+
 }
 
 .inspector-sections button:hover:not(:disabled) {
@@ -806,13 +788,12 @@ button:disabled {
   align-items: center;
   justify-content: space-between;
   color: var(--muted-2);
-  font: 600 8px/1 ui-monospace, "SFMono-Regular", Consolas, monospace;
-  letter-spacing: 0.12em;
+
 }
 
 .inspector-bottom-state strong {
   color: var(--muted);
-  font-weight: 600;
+
 }
 
 .inspector-empty,
@@ -884,21 +865,18 @@ button:disabled {
 .inspector-empty p {
   margin: 0 0 7px;
   color: var(--muted-2);
-  font: 600 8px/1 ui-monospace, "SFMono-Regular", Consolas, monospace;
-  letter-spacing: 0.14em;
+
 }
 
 .inspector-empty strong {
-  font-size: 13px;
-  letter-spacing: 0.04em;
+
 }
 
 .inspector-empty > span {
   max-width: 480px;
   margin-top: 9px;
   color: var(--muted);
-  font-size: 10px;
-  line-height: 1.55;
+
 }
 
 .inspector-empty button {
@@ -908,7 +886,7 @@ button:disabled {
   border-radius: 7px;
   background: var(--fill-soft);
   color: var(--text-soft);
-  font-size: 9px;
+
   cursor: pointer;
 }
 
@@ -983,17 +961,14 @@ button:disabled {
 .reading-copy strong {
   display: block;
   margin-top: 12px;
-  font-size: clamp(16px, 1.7vw, 24px);
-  font-weight: 580;
-  letter-spacing: -0.035em;
+
 }
 
 .reading-copy p {
   max-width: 390px;
   margin: 9px 0 0;
   color: var(--muted);
-  font-size: 10px;
-  line-height: 1.55;
+
 }
 
 .reading-code {
@@ -1001,8 +976,7 @@ button:disabled {
   gap: 8px;
   justify-items: end;
   color: var(--muted-3);
-  font: 500 9px/1 ui-monospace, "SFMono-Regular", Consolas, monospace;
-  letter-spacing: 0.12em;
+
 }
 
 .reading-code span {
@@ -1039,9 +1013,7 @@ button:disabled {
   margin-top: 9px;
   overflow: hidden;
   color: var(--text-strong);
-  font-size: clamp(18px, 1.9vw, 28px);
-  font-weight: 560;
-  letter-spacing: -0.035em;
+
   white-space: nowrap;
   text-overflow: ellipsis;
 }
@@ -1049,8 +1021,7 @@ button:disabled {
 .result-header p {
   margin: 8px 0 0;
   color: var(--muted);
-  font-size: 10px;
-  line-height: 1.5;
+
 }
 
 .signal-grid,
@@ -1079,8 +1050,7 @@ button:disabled {
   margin: 0;
   padding: 10px 0 8px;
   color: var(--muted-2);
-  font: 600 8px/1 ui-monospace, "SFMono-Regular", Consolas, monospace;
-  letter-spacing: 0.14em;
+
 }
 
 .data-row {
@@ -1094,14 +1064,14 @@ button:disabled {
 
 .data-row span {
   color: var(--muted);
-  font-size: 9px;
+
 }
 
 .data-row strong {
   min-width: 0;
   overflow: hidden;
   color: var(--text-medium);
-  font: 500 9px/1.2 ui-monospace, "SFMono-Regular", Consolas, monospace;
+
   white-space: nowrap;
   text-align: right;
   text-overflow: ellipsis;
@@ -1131,14 +1101,13 @@ button:disabled {
 .signal span {
   display: block;
   color: var(--muted-2);
-  font: 600 7px/1 ui-monospace, "SFMono-Regular", Consolas, monospace;
-  letter-spacing: 0.11em;
+
 }
 
 .signal strong {
   display: block;
   color: var(--muted);
-  font-size: 10px;
+
 }
 
 .signal--present strong {
@@ -1175,8 +1144,7 @@ button:disabled {
   display: block;
   margin-top: 12px;
   color: var(--text-strong);
-  font: 500 clamp(16px, 1.8vw, 24px)/1 ui-monospace, "SFMono-Regular", Consolas, monospace;
-  letter-spacing: -0.04em;
+
 }
 
 .finding-list {
@@ -1201,7 +1169,7 @@ button:disabled {
   border: 1px solid var(--line);
   border-radius: 5px;
   color: var(--muted);
-  font: 600 7px/1 ui-monospace, "SFMono-Regular", Consolas, monospace;
+
 }
 
 .severity--high {
@@ -1223,23 +1191,20 @@ button:disabled {
 
 .finding strong {
   display: block;
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
+
 }
 
 .finding p {
   margin: 6px 0 0;
   color: var(--muted);
-  font-size: 9px;
-  line-height: 1.5;
+
 }
 
 .finding code {
   display: block;
   margin-top: 6px;
   color: var(--muted-2);
-  font-size: 8px;
+
 }
 
 .finding-list--compact {
@@ -1272,7 +1237,7 @@ button:disabled {
   border-radius: 6px;
   background: transparent;
   color: #747a81;
-  font: 600 8px/1 ui-monospace, "SFMono-Regular", Consolas, monospace;
+
   cursor: pointer;
 }
 
@@ -1314,14 +1279,14 @@ button:disabled {
 .metadata-row code {
   overflow-wrap: anywhere;
   color: var(--muted);
-  font-size: 9px;
+
 }
 
 .metadata-row span {
   min-width: 0;
   overflow-wrap: anywhere;
   color: var(--text-medium);
-  font: 500 9px/1.45 ui-monospace, "SFMono-Regular", Consolas, monospace;
+
 }
 
 .quiet-state {
@@ -1334,13 +1299,11 @@ button:disabled {
 }
 
 .quiet-state span {
-  font: 500 24px/1 ui-monospace, "SFMono-Regular", Consolas, monospace;
-  letter-spacing: -0.05em;
+
 }
 
 .quiet-state strong {
-  font: 600 8px/1 ui-monospace, "SFMono-Regular", Consolas, monospace;
-  letter-spacing: 0.13em;
+
 }
 
 .data-stream {
@@ -1360,8 +1323,7 @@ button:disabled {
   border-radius: 4px;
   background: var(--surface-overlay);
   color: var(--accent);
-  font: 600 7px/1 ui-monospace, "SFMono-Regular", Consolas, monospace;
-  letter-spacing: 0.08em;
+
   opacity: 0;
   box-shadow: 0 0 18px rgba(var(--accent-rgb), 0.08);
   animation: data-flight 1.15s cubic-bezier(0.18, 0.78, 0.24, 1) forwards;
@@ -1505,7 +1467,6 @@ button:disabled {
     display: none;
   }
 }
-
 
 :root[data-theme="light"] .source-column,
 :root[data-theme="light"] .inspector {

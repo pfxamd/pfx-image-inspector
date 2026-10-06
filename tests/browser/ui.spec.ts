@@ -18,6 +18,12 @@ test("renders the fixed workspace and inspects a source image", async ({
   await page.locator("[data-theme-toggle]").click();
   await expect(root).toHaveAttribute("data-theme", "dark");
 
+  const sectionFontSize = await page
+    .locator(".inspector-sections button")
+    .first()
+    .evaluate((element) => getComputedStyle(element).fontSize);
+  expect(Number.parseFloat(sectionFontSize)).toBeGreaterThanOrEqual(12);
+
   for (const region of ["top", "left", "center", "bottom"]) {
     await expect(
       page.locator(`[data-layout-region="${region}"]`),

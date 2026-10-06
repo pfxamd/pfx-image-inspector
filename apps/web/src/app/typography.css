@@ -1,0 +1,188 @@
+:root {
+  --font-ui:
+    Inter, "SF Pro Display", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-data:
+    "SFMono-Regular", Consolas, "Liberation Mono", ui-monospace, monospace;
+
+  --type-base: 0.875rem;
+  --type-small: 0.75rem;
+  --type-title: 1rem;
+  --type-display: clamp(1.25rem, 1.6vw, 1.75rem);
+  --type-data: 0.8125rem;
+}
+
+body {
+  font-family: var(--font-ui);
+  font-size: var(--type-base);
+  line-height: 1.45;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.brand-name {
+  font-size: var(--type-title);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.beta-badge,
+.brand-subline,
+.section-kicker,
+.runtime-state,
+.source-foot,
+.inspector-topbar__active,
+.inspector-sections__label,
+.inspector-bottom-state,
+.result-header > span,
+.coordinate-field span,
+.metadata-table__header,
+.reading-copy > span {
+  font-size: var(--type-small);
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+.beta-badge {
+  letter-spacing: 0.04em;
+}
+
+.theme-toggle,
+.tool-button,
+.operation-button,
+.inspector-sections button,
+.inspector-empty button,
+.metadata-switcher button {
+  font-size: var(--type-data);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.theme-toggle__icon {
+  font-size: 1em;
+}
+
+.source-empty strong,
+.source-preview__fallback span {
+  font-size: var(--type-data);
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+.source-empty small,
+.source-preview__fallback small,
+.scan-label,
+.source-readout__meta,
+.operation-button kbd,
+.inspector-sections button small,
+.reading-code,
+.signal span,
+.severity,
+.finding code,
+.data-stream__token {
+  font-family: var(--font-data);
+  font-size: var(--type-small);
+  line-height: 1.3;
+}
+
+.scan-label,
+.data-stream__token {
+  font-weight: 650;
+}
+
+.source-readout__name {
+  font-size: var(--type-base);
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+.inspector-topbar__active strong,
+.inspector-sections button,
+.inspector-bottom-state strong,
+.inspector-empty p,
+.result-header p,
+.data-group h3,
+.data-row span,
+.signal strong,
+.finding p,
+.metadata-row code {
+  font-size: var(--type-data);
+  line-height: 1.35;
+}
+
+.inspector-topbar__active strong,
+.inspector-bottom-state strong,
+.data-group h3 {
+  font-weight: 650;
+}
+
+.inspector-empty strong {
+  font-size: var(--type-title);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.inspector-empty > span,
+.reading-copy p {
+  font-size: var(--type-base);
+  line-height: 1.5;
+}
+
+.reading-copy strong,
+.result-header strong {
+  font-size: var(--type-display);
+  font-weight: 650;
+  line-height: 1.15;
+}
+
+.data-row strong,
+.coordinate-field strong,
+.metadata-row span,
+.metadata-row code {
+  font-family: var(--font-data);
+}
+
+.data-row strong,
+.metadata-row span {
+  font-size: var(--type-data);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.coordinate-field strong {
+  font-size: clamp(1rem, 1.25vw, 1.25rem);
+  font-weight: 550;
+  line-height: 1.2;
+}
+
+.finding strong {
+  font-size: var(--type-base);
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+.metadata-row code {
+  font-weight: 500;
+}
+
+.quiet-state span {
+  font-family: var(--font-data);
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.quiet-state strong {
+  font-size: var(--type-small);
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+@media (max-height: 760px) {
+  :root {
+    --type-base: 0.8125rem;
+    --type-data: 0.75rem;
+  }
+}

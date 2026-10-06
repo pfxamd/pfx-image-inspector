@@ -19,6 +19,7 @@ import {
   type Theme,
 } from "./theme.js";
 import "./app.css";
+import "./typography.css";
 
 const ACCEPTED_TYPES =
   "image/jpeg,image/png,image/webp,image/tiff,image/heic,image/heif,image/avif,.jpg,.jpeg,.png,.webp,.tif,.tiff,.heic,.heif,.avif";
