@@ -190,17 +190,28 @@ interface TimestampSources {
 }
 
 function normalizeTimestamps(source: TimestampSources): TimestampInfo {
+  const iptcCreated = combineIptcDateTime(
+    source.iptc,
+    "DateCreated",
+    "TimeCreated",
+  );
+  const iptcDigitized = combineIptcDateTime(
+    source.iptc,
+    "DigitalCreationDate",
+    "DigitalCreationTime",
+  );
+
   return {
-    takenAt: firstDateFromSources([
-      [source.photo, ["DateTimeOriginal"]],
-      [source.xmp, ["DateTimeOriginal", "DateCreated"]],
-      [source.iptc, ["DateCreated"]],
-    ]),
-    digitizedAt: firstDateFromSources([
-      [source.photo, ["CreateDate", "DateTimeDigitized"]],
-      [source.xmp, ["CreateDate", "DateTimeDigitized", "DigitalCreationDate"]],
-      [source.iptc, ["DigitalCreationDate"]],
-    ]),
+    takenAt:
+      firstDateFromSources([
+        [source.photo, ["DateTimeOriginal"]],
+        [source.xmp, ["DateTimeOriginal", "DateCreated"]],
+      ]) ?? iptcCreated,
+    digitizedAt:
+      firstDateFromSources([
+        [source.photo, ["CreateDate", "DateTimeDigitized"]],
+        [source.xmp, ["CreateDate", "DateTimeDigitized", "DigitalCreationDate"]],
+      ]) ?? iptcDigitized,
     modifiedAt: firstDateFromSources([
       [source.image, ["ModifyDate", "DateTime"]],
       [source.xmp, ["ModifyDate", "MetadataDate"]],
@@ -345,6 +356,40 @@ function firstString(
     : null;
 }
 
+function combineIptcDateTime(
+  source: Record<string, unknown>,
+  dateKey: string,
+  timeKey: string,
+): string | null {
+  const dateValue = findDeepValue(source, [dateKey]);
+  const timeValue = findDeepValue(source, [timeKey]);
+
+  if (typeof dateValue !== "string") return null;
+
+  const dateMatch = /^(\d{4})(\d{2})(\d{2})$/.exec(dateValue.trim());
+  if (!dateMatch) return normalizeDateValue(dateValue);
+
+  const [, year, month, day] = dateMatch;
+
+  if (typeof timeValue !== "string" || timeValue.trim().length === 0) {
+    return `${year}-${month}-${day}`;
+  }
+
+  const time = timeValue.trim();
+  const timeMatch =
+    /^(\d{2}):?(\d{2}):?(\d{2})(?:([+-])(\d{2}):?(\d{2}))?$/.exec(time);
+
+  if (!timeMatch) return `${year}-${month}-${day}`;
+
+  const [, hour, minute, second, sign, offsetHour, offsetMinute] = timeMatch;
+  const offset =
+    sign && offsetHour && offsetMinute
+      ? `${sign}${offsetHour}:${offsetMinute}`
+      : "";
+
+  return `${year}-${month}-${day}T${hour}:${minute}:${second}${offset}`;
+}
+
 function firstDateFromSources(
   candidates: ReadonlyArray<
     readonly [Record<string, unknown>, readonly string[]]
@@ -426,6 +471,16 @@ function findDeepValue(
     if (source[key] !== undefined && source[key] !== null) return source[key];
   }
 
+  for (const [candidateKey, value] of Object.entries(source)) {
+    if (
+      value !== undefined &&
+      value !== null &&
+      keys.some((key) => metadataKeyMatches(candidateKey, key))
+    ) {
+      return value;
+    }
+  }
+
   for (const value of Object.values(source)) {
     if (!isRecord(value)) continue;
     const found = findDeepValue(value, keys, depth + 1);
@@ -446,6 +501,18 @@ function findDeepString(
   return typeof value === "string" && value.trim().length > 0
     ? value.trim()
     : null;
+}
+
+function metadataKeyMatches(candidate: string, expected: string): boolean {
+  const localName = candidate.includes(":")
+    ? (candidate.split(":").at(-1) ?? candidate)
+    : candidate;
+
+  return normalizeMetadataKey(localName) === normalizeMetadataKey(expected);
+}
+
+function normalizeMetadataKey(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]/g, "");
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

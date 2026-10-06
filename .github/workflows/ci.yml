@@ -37,6 +37,4 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y libimage-exiftool-perl
 
       - name: Reference corpus
-        env:
-          CORPUS_DEBUG_VALUES: "1"
         run: pnpm corpus

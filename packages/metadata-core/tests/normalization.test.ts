@@ -91,6 +91,38 @@ describe("metadata normalization", () => {
     expect(result.standards.icc.version).toBe("4.3.0");
   });
 
+  it("normalizes namespaced XMP dates and combines IPTC date/time", () => {
+    const extraction: AdapterExtractionResult = {
+      adapterId: "fixture",
+      state: "success",
+      capabilities: {
+        exif: true,
+        xmp: true,
+        iptc: true,
+        icc: false,
+        jfif: false,
+      },
+      sources: {
+        xmp: {
+          "xap:CreateDate": "2009-05-19T09:57:21-07:00",
+        },
+        iptc: {
+          DateCreated: "20030830",
+          TimeCreated: "000000",
+        },
+      },
+      raw: {},
+      warnings: [],
+    };
+
+    const result = normalizeExtractions([extraction]);
+
+    expect(result.timestamps.takenAt).toBe("2003-08-30T00:00:00");
+    expect(result.timestamps.digitizedAt).toBe(
+      "2009-05-19T09:57:21-07:00",
+    );
+  });
+
   it("marks supported metadata malformed when its adapter fails", () => {
     const extraction: AdapterExtractionResult = {
       adapterId: "fixture",
