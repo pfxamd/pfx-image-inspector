@@ -123,23 +123,56 @@ function parseMluc(
 
   const count = readU32BE(bytes, offset + 8);
   const recordSize = readU32BE(bytes, offset + 12);
-  if (count === 0 || recordSize < 12 || offset + 16 + count * recordSize > offset + size) {
+  if (
+    count === 0 ||
+    recordSize < 12 ||
+    offset + 16 + count * recordSize > offset + size
+  ) {
     return null;
   }
 
-  const record = offset + 16;
-  const length = readU32BE(bytes, record + 4);
-  const relativeOffset = readU32BE(bytes, record + 8);
-  const textOffset = offset + relativeOffset;
-  if (textOffset + length > offset + size || length % 2 !== 0) return null;
+  const records: Array<{
+    language: string;
+    country: string;
+    text: string;
+  }> = [];
 
-  const chars: number[] = [];
-  for (let cursor = textOffset; cursor < textOffset + length; cursor += 2) {
-    chars.push(((bytes[cursor] ?? 0) << 8) | (bytes[cursor + 1] ?? 0));
+  for (let index = 0; index < count; index += 1) {
+    const record = offset + 16 + index * recordSize;
+    const language = ascii(bytes, record, record + 2).toLowerCase();
+    const country = ascii(bytes, record + 2, record + 4).toUpperCase();
+    const length = readU32BE(bytes, record + 4);
+    const relativeOffset = readU32BE(bytes, record + 8);
+    const textOffset = offset + relativeOffset;
+
+    if (
+      length === 0 ||
+      length % 2 !== 0 ||
+      textOffset < offset ||
+      textOffset + length > offset + size
+    ) {
+      continue;
+    }
+
+    const chars: number[] = [];
+    for (let cursor = textOffset; cursor < textOffset + length; cursor += 2) {
+      chars.push(((bytes[cursor] ?? 0) << 8) | (bytes[cursor + 1] ?? 0));
+    }
+
+    const text = String.fromCharCode(...chars).trim();
+    if (text.length > 0) records.push({ language, country, text });
   }
 
-  const text = String.fromCharCode(...chars).trim();
-  return text.length > 0 ? text : null;
+  if (records.length === 0) return null;
+
+  return (
+    records.find(
+      (record) => record.language === "en" && record.country === "US",
+    )?.text ??
+    records.find((record) => record.language === "en")?.text ??
+    records[0]?.text ??
+    null
+  );
 }
 
 function parseVersion(bytes: Uint8Array): string {

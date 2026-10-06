@@ -91,6 +91,30 @@ describe("metadata normalization", () => {
     expect(result.standards.icc.version).toBe("4.3.0");
   });
 
+  it("uses the first meaningful ISO value from multi-value EXIF tags", () => {
+    const extraction: AdapterExtractionResult = {
+      adapterId: "fixture",
+      state: "success",
+      capabilities: {
+        exif: true,
+        xmp: false,
+        iptc: false,
+        icc: false,
+        jfif: false,
+      },
+      sources: {
+        photo: {
+          ISO: Uint16Array.from([200, 0]),
+        },
+      },
+      raw: {},
+      warnings: [],
+    };
+
+    const result = normalizeExtractions([extraction]);
+    expect(result.camera?.iso).toBe(200);
+  });
+
   it("normalizes namespaced XMP dates and combines IPTC date/time", () => {
     const extraction: AdapterExtractionResult = {
       adapterId: "fixture",

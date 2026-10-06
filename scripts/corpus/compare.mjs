@@ -248,19 +248,7 @@ function finishTotals(value) {
 }
 
 function expectedField(name, fields) {
-  const value = fields[name];
-
-  if (
-    (name === "XResolution" || name === "YResolution") &&
-    typeof value === "number"
-  ) {
-    const unit = fields.ResolutionUnit;
-    if (unit === 3 || String(unit).trim().toLowerCase().includes("cm")) {
-      return value * 2.54;
-    }
-  }
-
-  return value;
+  return fields[name];
 }
 
 function hasValue(value) {
@@ -336,10 +324,11 @@ function normalizeColorSpace(value) {
 function normalizeDate(value) {
   const raw = String(value).trim();
   const match =
-    /^(\d{4})[:\-](\d{2})[:\-](\d{2})[ T](\d{2}):(\d{2}):(\d{2})/.exec(raw);
+    /^(\d{4})[:\-](\d{2})[:\-](\d{2})[ T](\d{2}):(\d{2})(?::(\d{2})(?:\.\d+)?)?/.exec(raw);
 
   if (match) {
-    return `${match[1]}-${match[2]}-${match[3]}T${match[4]}:${match[5]}:${match[6]}`;
+    const seconds = match[6] ?? "00";
+    return `${match[1]}-${match[2]}-${match[3]}T${match[4]}:${match[5]}:${seconds}`;
   }
 
   return raw.replace(/\s+/g, " ");

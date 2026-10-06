@@ -74,41 +74,69 @@ function isTiff(bytes: Uint8Array): boolean {
 function detectIsoBmffImage(bytes: Uint8Array): DetectedFormat | null {
   if (bytes.byteLength < 12 || ascii(bytes, 4, 8) !== "ftyp") return null;
 
-  const brands = new Set<string>();
+  const majorBrand = ascii(bytes, 8, 12);
+  const brands = new Set<string>([majorBrand]);
   const limit = Math.min(bytes.byteLength, 64);
 
-  for (let offset = 8; offset + 4 <= limit; offset += 4) {
+  for (let offset = 16; offset + 4 <= limit; offset += 4) {
     brands.add(ascii(bytes, offset, offset + 4));
   }
 
   if (hasAny(brands, AVIF_BRANDS)) {
     return {
       format: "avif",
-      mime: brands.has("avis") ? "image/avif-sequence" : "image/avif",
+      mime: isoBmffMime(majorBrand, "avif"),
     };
   }
 
   if (hasAny(brands, HEIC_BRANDS)) {
     return {
       format: "heic",
-      mime:
-        brands.has("hevc") || brands.has("hevx")
-          ? "image/heic-sequence"
-          : "image/heic",
+      mime: isoBmffMime(majorBrand, "heic"),
     };
   }
 
   if (hasAny(brands, HEIF_BRANDS)) {
     return {
       format: "heif",
-      mime:
-        brands.has("msf1") || brands.has("hevs") || brands.has("hevm")
-          ? "image/heif-sequence"
-          : "image/heif",
+      mime: isoBmffMime(majorBrand, "heif"),
     };
   }
 
   return null;
+}
+
+function isoBmffMime(
+  majorBrand: string,
+  format: "avif" | "heic" | "heif",
+): string {
+  if (majorBrand === "avis") return "image/avif-sequence";
+  if (majorBrand === "avif") return "image/avif";
+
+  if (majorBrand === "hevc" || majorBrand === "hevx") {
+    return "image/heic-sequence";
+  }
+  if (majorBrand === "heic" || majorBrand === "heix") {
+    return "image/heic";
+  }
+
+  if (
+    majorBrand === "msf1" ||
+    majorBrand === "hevs" ||
+    majorBrand === "hevm"
+  ) {
+    return "image/heif-sequence";
+  }
+  if (
+    majorBrand === "mif1" ||
+    majorBrand === "heif" ||
+    majorBrand === "heim" ||
+    majorBrand === "heis"
+  ) {
+    return "image/heif";
+  }
+
+  return MIME_BY_FORMAT[format];
 }
 
 function hasAny(values: Set<string>, candidates: Set<string>): boolean {

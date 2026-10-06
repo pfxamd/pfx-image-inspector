@@ -144,7 +144,11 @@ function normalizeCamera(source: Record<string, unknown>): CameraInfo | null {
     make: firstString(source, ["Make"]),
     model: firstString(source, ["Model"]),
     lens: firstString(source, ["LensModel", "Lens"]),
-    iso: firstNumber(source, ["ISO", "PhotographicSensitivity", "ISOSpeedRatings"]),
+    iso: firstCameraNumber(source, [
+      "ISO",
+      "PhotographicSensitivity",
+      "ISOSpeedRatings",
+    ]),
     aperture: firstNumber(source, ["FNumber"]),
     focalLength: firstNumber(source, ["FocalLength"]),
     exposureTime: firstNumber(source, ["ExposureTime"]),
@@ -380,6 +384,38 @@ function firstNumber(
 ): number | null {
   const value = firstValue(source, keys);
   return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
+function firstCameraNumber(
+  source: Record<string, unknown>,
+  keys: readonly string[],
+): number | null {
+  const value = firstValue(source, keys);
+
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+
+  const values = numericSequence(value);
+  if (values === null) return null;
+
+  const positive = values.find(
+    (item) => typeof item === "number" && Number.isFinite(item) && item > 0,
+  );
+  if (typeof positive === "number") return positive;
+
+  const finite = values.find(
+    (item) => typeof item === "number" && Number.isFinite(item),
+  );
+  return typeof finite === "number" ? finite : null;
+}
+
+function numericSequence(value: unknown): readonly unknown[] | null {
+  if (Array.isArray(value)) return value;
+
+  if (ArrayBuffer.isView(value) && !(value instanceof DataView)) {
+    return Array.from(value as unknown as ArrayLike<number>);
+  }
+
+  return null;
 }
 
 function firstString(

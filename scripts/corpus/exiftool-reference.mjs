@@ -28,9 +28,7 @@ const fields = [
   "GPSLatitude",
   "GPSLongitude",
   "GPSAltitude",
-  "XResolution",
-  "YResolution",
-  "ResolutionUnit",
+
   "ColorSpace",
   "ProfileDescription",
   "ExifVersion",
@@ -57,6 +55,24 @@ for (const sample of manifest.samples) {
     const [record = {}] = JSON.parse(stdout);
     delete record.SourceFile;
 
+    const exifResolution = await readResolution(
+      samplePath(sample),
+      "EXIF",
+      3,
+    );
+    const jfifResolution = await readResolution(
+      samplePath(sample),
+      "JFIF",
+      2,
+    );
+    const resolution =
+      exifResolution.x !== null || exifResolution.y !== null
+        ? exifResolution
+        : jfifResolution;
+
+    if (resolution.x !== null) record.XResolution = resolution.x;
+    if (resolution.y !== null) record.YResolution = resolution.y;
+
     references[sample.id] = {
       status: "ok",
       fields: record,
@@ -70,6 +86,39 @@ for (const sample of manifest.samples) {
         error instanceof Error ? error.message : "ExifTool execution failed",
       ],
     };
+  }
+}
+
+async function readResolution(path, group, centimeterUnit) {
+  const args = [
+    "-json",
+    "-n",
+    `-${group}:XResolution`,
+    `-${group}:YResolution`,
+    `-${group}:ResolutionUnit`,
+    path,
+  ];
+
+  try {
+    const { stdout } = await execFileAsync("exiftool", args, {
+      maxBuffer: 1024 * 1024,
+    });
+    const [record = {}] = JSON.parse(stdout);
+
+    let x =
+      typeof record.XResolution === "number" ? record.XResolution : null;
+    let y =
+      typeof record.YResolution === "number" ? record.YResolution : null;
+    const unit = record.ResolutionUnit;
+
+    if (unit === centimeterUnit) {
+      if (x !== null) x *= 2.54;
+      if (y !== null) y *= 2.54;
+    }
+
+    return { x, y };
+  } catch {
+    return { x: null, y: null };
   }
 }
 
