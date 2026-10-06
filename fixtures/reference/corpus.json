@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "repository": "MikeKovarik/exifr",
+    "commit": "6cbf6e921688faf7723e1f2e0b9e672d1f0aa21c",
+    "license": "MIT"
+  },
+  "samples": [
+    {
+      "id": "jpeg-iptc",
+      "format": "jpeg",
+      "path": "BonTonARTSTORplusIPTC.jpg",
+      "sourcePath": "test/fixtures/BonTonARTSTORplusIPTC.jpg",
+      "size": 77296,
+      "gitBlobSha": "86aa3b867dc3bd034ca9be6a4b68fd3f06c29c33"
+    },
+    {
+      "id": "tiff-reference",
+      "format": "tiff",
+      "path": "Bush-dog.tif",
+      "sourcePath": "test/fixtures/Bush-dog.tif",
+      "size": 29068,
+      "gitBlobSha": "dc60ecfe60cb836197c0ddb6e49a08b4c44453df"
+    },
+    {
+      "id": "avif-reference",
+      "format": "avif",
+      "path": "Irvine_CA.avif",
+      "sourcePath": "test/fixtures/avif/Irvine_CA.avif",
+      "size": 28133,
+      "gitBlobSha": "63f79a96863f959aa2b4f2550d39423275d6bb6c"
+    },
+    {
+      "id": "heic-reference",
+      "format": "heic",
+      "path": "heic-collection.heic",
+      "sourcePath": "test/fixtures/heic-collection.heic",
+      "size": 458669,
+      "gitBlobSha": "72ccf5bdca5e683ac6e7093af69f8f874b71af5d"
+    },
+    {
+      "id": "jpeg-malformed",
+      "format": "jpeg",
+      "path": "RangeError_Offset_outside_bounds.jpg",
+      "sourcePath": "test/fixtures/RangeError_Offset_outside_bounds.jpg",
+      "size": 4789,
+      "gitBlobSha": "2f0efffe0f2295a285fb8a5251b7ed32b91ed196",
+      "robustnessOnly": true
+    }
+  ]
+}

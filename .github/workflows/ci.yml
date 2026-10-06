@@ -32,3 +32,9 @@ jobs:
 
       - name: Lint
         run: pnpm lint
+
+      - name: Install ExifTool
+        run: sudo apt-get update && sudo apt-get install -y libimage-exiftool-perl
+
+      - name: Reference corpus
+        run: pnpm corpus

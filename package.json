@@ -13,7 +13,11 @@
     "typecheck": "pnpm -r --if-present typecheck",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "corpus:fetch": "node scripts/corpus/fetch.mjs",
+    "corpus:reference": "node scripts/corpus/exiftool-reference.mjs",
+    "corpus:compare": "node scripts/corpus/compare.mjs",
+    "corpus": "pnpm corpus:fetch && pnpm build && pnpm corpus:reference && pnpm corpus:compare"
   },
   "devDependencies": {
     "eslint": "^10.10.0",

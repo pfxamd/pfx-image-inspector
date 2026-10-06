@@ -15,6 +15,12 @@ Early foundation work for `v0.1`. The repository currently focuses on the metada
 - Modular parsers and adapters
 - Testable against reference tooling such as ExifTool
 
+## Validation
+
+`pnpm corpus` downloads a pinned reference corpus, generates ExifTool
+references, and compares PFx canonical fields without storing metadata values
+in the report.
+
 ## License
 
 Apache-2.0

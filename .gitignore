@@ -7,3 +7,6 @@ coverage/
 .env
 .env.*
 !.env.example
+
+fixtures/reference/files/
+fixtures/reference/generated/

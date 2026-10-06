@@ -30,3 +30,13 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE.
 
 Development tooling remains subject to the licenses published by each package.
+
+## Reference corpus
+
+The optional reference corpus downloader uses selected test fixtures from
+`MikeKovarik/exifr`, pinned to commit
+`6cbf6e921688faf7723e1f2e0b9e672d1f0aa21c`.
+
+The upstream repository is MIT-licensed. The fixture bytes are downloaded only
+for validation and are not committed into this repository. Their Git blob SHA
+and expected size are verified before use.
