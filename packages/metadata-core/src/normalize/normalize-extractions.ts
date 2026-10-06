@@ -123,7 +123,7 @@ function normalizeImage(source: Record<string, unknown>): ImageInfo {
       "Height",
       "height",
     ]),
-    orientation: firstNumber(source, ["Orientation"]),
+    orientation: normalizeOrientation(firstValue(source, ["Orientation"])),
     dpi: normalizeDpi(source),
     bitDepth: normalizeBitDepth(firstValue(source, ["BitDepth", "BitsPerSample"])),
   };
@@ -189,6 +189,33 @@ function normalizeSoftware(source: Record<string, unknown>): SoftwareInfo | null
   ]);
 
   return name === null ? null : { name, version: null };
+}
+
+const ORIENTATION_BY_LABEL: Readonly<Record<string, number>> = {
+  "Horizontal (normal)": 1,
+  "Mirror horizontal": 2,
+  "Rotate 180": 3,
+  "Mirror vertical": 4,
+  "Mirror horizontal and rotate 270 CW": 5,
+  "Rotate 90 CW": 6,
+  "Mirror horizontal and rotate 90 CW": 7,
+  "Rotate 270 CW": 8,
+};
+
+function normalizeOrientation(value: unknown): number | null {
+  if (typeof value === "number" && Number.isInteger(value) && value >= 1 && value <= 8) {
+    return value;
+  }
+
+  if (typeof value === "string") {
+    const translated = ORIENTATION_BY_LABEL[value.trim()];
+    if (translated !== undefined) return translated;
+
+    const numeric = Number(value);
+    if (Number.isInteger(numeric) && numeric >= 1 && numeric <= 8) return numeric;
+  }
+
+  return null;
 }
 
 function normalizeDpi(source: Record<string, unknown>): ImageInfo["dpi"] {

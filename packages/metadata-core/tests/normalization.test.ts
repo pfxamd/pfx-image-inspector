@@ -18,7 +18,7 @@ describe("metadata normalization", () => {
         image: {
           ImageWidth: 4032,
           ImageHeight: 3024,
-          Orientation: 1,
+          Orientation: "Horizontal (normal)",
           Make: "Canon",
           Model: "EOS R5",
           XResolution: 72,
