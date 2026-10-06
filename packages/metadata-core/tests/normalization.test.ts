@@ -105,6 +105,7 @@ describe("metadata normalization", () => {
       sources: {
         xmp: {
           "xap:CreateDate": "2009-05-19T09:57:21-07:00",
+          "photoshop:DateCreated": "2010-01-01T12:00:00Z",
         },
         iptc: {
           DateCreated: "20030830",

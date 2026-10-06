@@ -205,8 +205,10 @@ function normalizeTimestamps(source: TimestampSources): TimestampInfo {
     takenAt:
       firstDateFromSources([
         [source.photo, ["DateTimeOriginal"]],
-        [source.xmp, ["DateTimeOriginal", "DateCreated"]],
-      ]) ?? iptcCreated,
+        [source.xmp, ["DateTimeOriginal"]],
+      ]) ??
+      iptcCreated ??
+      firstDateFromSources([[source.xmp, ["DateCreated"]]]),
     digitizedAt:
       firstDateFromSources([
         [source.photo, ["CreateDate", "DateTimeDigitized"]],
