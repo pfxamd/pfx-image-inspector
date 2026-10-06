@@ -5,6 +5,19 @@ test("renders the fixed workspace and inspects a source image", async ({
 }) => {
   await page.goto("/");
 
+  const root = page.locator("html");
+  await expect(root).toHaveAttribute("data-theme", "dark");
+
+  await page.locator("[data-theme-toggle]").click();
+  await expect(root).toHaveAttribute("data-theme", "light");
+  await expect(page.locator("[data-theme-toggle]")).toContainText("DARK");
+
+  await page.reload();
+  await expect(root).toHaveAttribute("data-theme", "light");
+
+  await page.locator("[data-theme-toggle]").click();
+  await expect(root).toHaveAttribute("data-theme", "dark");
+
   for (const region of ["top", "left", "center", "bottom"]) {
     await expect(
       page.locator(`[data-layout-region="${region}"]`),

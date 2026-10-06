@@ -12,6 +12,12 @@ import { InspectorPanel } from "../features/inspection/components/InspectorPanel
 import { SourcePanel } from "../features/inspection/components/SourcePanel.js";
 import type { InspectorTab } from "../features/inspection/components/InspectorPanel.js";
 import pfxLogo from "../assets/pfx-logo.svg";
+import {
+  applyTheme,
+  getInitialTheme,
+  persistTheme,
+  type Theme,
+} from "./theme.js";
 import "./app.css";
 
 const ACCEPTED_TYPES =
@@ -25,7 +31,13 @@ export function App() {
   const [activeTab, setActiveTab] = useState<InspectorTab>("overview");
   const [copied, setCopied] = useState(false);
   const [streamCycle, setStreamCycle] = useState(0);
+  const [theme, setTheme] = useState<Theme>(() => getInitialTheme());
   const previousStatus = useRef(state.status);
+
+  useEffect(() => {
+    applyTheme(theme);
+    persistTheme(theme);
+  }, [theme]);
 
   useEffect(() => {
     if (state.file === null) {
@@ -151,6 +163,25 @@ export function App() {
         </div>
 
         <div className="header-actions">
+          <button
+            className="theme-toggle"
+            type="button"
+            data-theme-toggle
+            aria-label={
+              theme === "dark"
+                ? "Switch to light mode"
+                : "Switch to dark mode"
+            }
+            onClick={() =>
+              setTheme((current) => (current === "dark" ? "light" : "dark"))
+            }
+          >
+            <span className="theme-toggle__icon" aria-hidden="true">
+              {theme === "dark" ? "☼" : "◐"}
+            </span>
+            <span>{theme === "dark" ? "LIGHT" : "DARK"}</span>
+          </button>
+
           <div
             className={`runtime-state runtime-state--${state.status}`}
             aria-live="polite"
