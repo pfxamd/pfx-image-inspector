@@ -131,6 +131,31 @@ await writeFile(outputPath("comparison.md"), renderMarkdown(report));
 
 console.log(JSON.stringify(summary, null, 2));
 
+for (const sample of samples) {
+  if (sample.robustnessOnly || !Array.isArray(sample.fields)) continue;
+
+  const missing = sample.fields
+    .filter((field) => field.status === "missing")
+    .map((field) => field.name);
+  const mismatch = sample.fields
+    .filter((field) => field.status === "mismatch")
+    .map((field) => field.name);
+
+  if (missing.length > 0 || mismatch.length > 0) {
+    console.log(
+      JSON.stringify(
+        {
+          sample: sample.id,
+          missing,
+          mismatch,
+        },
+        null,
+        2,
+      ),
+    );
+  }
+}
+
 if (inspectionFailures > 0) process.exitCode = 1;
 
 function hasValue(value) {
