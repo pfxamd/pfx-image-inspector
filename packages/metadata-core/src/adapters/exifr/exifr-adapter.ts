@@ -57,7 +57,7 @@ export const exifrAdapter: MetadataAdapter = {
         adapterId: "exifr",
         state: "success",
         capabilities,
-        sources: pickSources(raw),
+        sources: pickSources(raw, capabilities.xmp),
         raw,
         warnings: [],
       };
@@ -88,14 +88,31 @@ function getCapabilities(format: ImageFormat): MetadataCapabilities {
   return CAPABILITIES[format];
 }
 
+const NON_XMP_ROOT_KEYS = new Set([
+  "ifd0",
+  "ifd1",
+  "exif",
+  "gps",
+  "interop",
+  "iptc",
+  "icc",
+  "jfif",
+  "ihdr",
+  "makerNote",
+  "userComment",
+  "thumbnail",
+  "errors",
+  "xmp",
+]);
+
 function pickSources(
   raw: Record<string, unknown>,
+  xmpEnabled: boolean,
 ): Partial<Record<SourceBlockKey, Record<string, unknown>>> {
   const pairs: Array<[SourceBlockKey, string]> = [
     ["image", "ifd0"],
     ["photo", "exif"],
     ["gps", "gps"],
-    ["xmp", "xmp"],
     ["iptc", "iptc"],
     ["icc", "icc"],
     ["jfif", "jfif"],
@@ -109,7 +126,35 @@ function pickSources(
     if (Object.keys(entries).length > 0) sources[target] = entries;
   }
 
+  if (xmpEnabled) {
+    const xmp = collectXmpNamespaces(raw);
+    if (Object.keys(xmp).length > 0) sources.xmp = xmp;
+  }
+
   return sources;
+}
+
+function collectXmpNamespaces(
+  raw: Record<string, unknown>,
+): Record<string, unknown> {
+  const xmp: Record<string, unknown> = {};
+  const direct = raw.xmp;
+
+  if (isRecord(direct)) {
+    Object.assign(xmp, direct);
+  } else if (typeof direct === "string" && direct.length > 0) {
+    xmp.packet = direct;
+  }
+
+  for (const [key, value] of Object.entries(raw)) {
+    if (NON_XMP_ROOT_KEYS.has(key) || value === undefined || value === null) {
+      continue;
+    }
+
+    xmp[key] = value;
+  }
+
+  return xmp;
 }
 
 function toRecord(value: unknown): Record<string, unknown> {
