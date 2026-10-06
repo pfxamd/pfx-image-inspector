@@ -5,6 +5,12 @@ test("renders the fixed workspace and inspects a source image", async ({
 }) => {
   await page.goto("/");
 
+  for (const region of ["top", "left", "center", "bottom"]) {
+    await expect(
+      page.locator(`[data-layout-region="${region}"]`),
+    ).toBeVisible();
+  }
+
   const viewport = page.viewportSize();
   expect(viewport).not.toBeNull();
 

@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { InspectorShell } from "./InspectorShell.js";
 import type {
   ImageInspectionResult,
   MetadataStatus,
@@ -52,47 +53,113 @@ export function InspectorPanel({
   onTabChange,
   onOpen,
 }: InspectorPanelProps) {
+  const activeLabel =
+    TABS.find((tab) => tab.id === activeTab)?.label ?? "Overview";
+
   return (
     <section className="inspector" aria-label="Inspection results">
-      <div className="inspector-head">
-        <div className="section-kicker">
-          <span>INSPECTOR</span>
-          <span>03</span>
-        </div>
+      <InspectorShell
+        top={
+          <div className="inspector-topbar">
+            <div className="section-kicker">
+              <span>INSPECTOR</span>
+              <span>03</span>
+            </div>
+            <div className="inspector-topbar__active">
+              <span>ACTIVE VIEW</span>
+              <strong>{activeLabel}</strong>
+            </div>
+          </div>
+        }
+        left={
+          <nav className="inspector-sections" aria-label="Inspection sections">
+            <span className="inspector-sections__label">SECTIONS</span>
+            <div className="inspector-sections__list">
+              {TABS.map((tab, index) => (
+                <button
+                  key={tab.id}
+                  className={activeTab === tab.id ? "is-active" : undefined}
+                  onClick={() => onTabChange(tab.id)}
+                  disabled={state.result === null && state.status !== "error"}
+                >
+                  <span>{tab.label}</span>
+                  <small>{String(index + 1).padStart(2, "0")}</small>
+                </button>
+              ))}
+            </div>
+          </nav>
+        }
+        center={
+          <div className="inspector-stage">
+            {state.status === "idle" ? (
+              <EmptyInspector onOpen={onOpen} />
+            ) : null}
 
-        <nav className="inspector-tabs" aria-label="Inspection sections">
-          {TABS.map((tab) => (
-            <button
-              key={tab.id}
-              className={activeTab === tab.id ? "is-active" : undefined}
-              onClick={() => onTabChange(tab.id)}
-              disabled={state.result === null && state.status !== "error"}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </nav>
-      </div>
+            {state.status === "inspecting" ? <ReadingInspector /> : null}
 
-      <div className="inspector-stage">
-        {state.status === "idle" ? (
-          <EmptyInspector onOpen={onOpen} />
-        ) : null}
+            {state.status === "error" ? (
+              <ErrorInspector
+                message={state.error?.message ?? "Image data could not be read."}
+                onOpen={onOpen}
+              />
+            ) : null}
 
-        {state.status === "inspecting" ? <ReadingInspector /> : null}
-
-        {state.status === "error" ? (
-          <ErrorInspector
-            message={state.error?.message ?? "Image data could not be read."}
-            onOpen={onOpen}
-          />
-        ) : null}
-
-        {state.status === "ready" && state.result !== null ? (
-          <ResultInspector result={state.result} tab={activeTab} />
-        ) : null}
-      </div>
+            {state.status === "ready" && state.result !== null ? (
+              <ResultInspector result={state.result} tab={activeTab} />
+            ) : null}
+          </div>
+        }
+        bottom={<InspectorBottomBar state={state} />}
+      />
     </section>
+  );
+}
+
+function InspectorBottomBar({ state }: { state: InspectionSessionState }) {
+  if (state.status === "ready" && state.result !== null) {
+    const result = state.result;
+
+    return (
+      <div className="signal-strip signal-strip--shell">
+        <Signal
+          label="GPS"
+          state={result.location === null ? "absent" : "present"}
+        />
+        <Signal label="EXIF" state={result.metadata.exif.status} />
+        <Signal label="XMP" state={result.metadata.xmp.status} />
+        <Signal label="ICC" state={result.metadata.icc.status} />
+        <Signal
+          label="C2PA"
+          state={
+            result.provenance.c2pa.status === "detected"
+              ? "present"
+              : "absent"
+          }
+        />
+        <Signal
+          label="PRIVACY"
+          state={
+            result.privacy.status === "findings_detected"
+              ? "partial"
+              : "present"
+          }
+        />
+      </div>
+    );
+  }
+
+  const label =
+    state.status === "inspecting"
+      ? "READING SOURCE"
+      : state.status === "error"
+        ? "READ FAILURE"
+        : "WAITING FOR SOURCE";
+
+  return (
+    <div className="inspector-bottom-state">
+      <span>SESSION</span>
+      <strong>{label}</strong>
+    </div>
   );
 }
 
@@ -241,31 +308,6 @@ function OverviewView({ result }: { result: ImageInspectionResult }) {
         </DataGroup>
       </div>
 
-      <div className="signal-strip">
-        <Signal
-          label="GPS"
-          state={result.location === null ? "absent" : "present"}
-        />
-        <Signal label="EXIF" state={result.metadata.exif.status} />
-        <Signal label="XMP" state={result.metadata.xmp.status} />
-        <Signal label="ICC" state={result.metadata.icc.status} />
-        <Signal
-          label="C2PA"
-          state={
-            result.provenance.c2pa.status === "detected"
-              ? "present"
-              : "absent"
-          }
-        />
-        <Signal
-          label="PRIVACY"
-          state={
-            result.privacy.status === "findings_detected"
-              ? "partial"
-              : "present"
-          }
-        />
-      </div>
     </div>
   );
 }

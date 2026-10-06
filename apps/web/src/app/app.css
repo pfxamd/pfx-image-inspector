@@ -528,71 +528,186 @@ button:disabled {
 
 .inspector {
   overflow: hidden;
+}
+
+.inspector-shell {
+  height: 100%;
+  min-height: 0;
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: 56px minmax(0, 1fr) 56px;
 }
 
-.inspector-head {
-  padding: 15px 18px 0;
-  border-bottom: 1px solid var(--line);
-}
-
-.inspector-tabs {
-  display: flex;
-  align-items: center;
-  gap: 22px;
-  height: 43px;
-  margin-top: 5px;
+.inspector-shell__top,
+.inspector-shell__bottom {
+  min-width: 0;
   overflow: hidden;
 }
 
-.inspector-tabs button {
-  position: relative;
-  height: 100%;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: #70767e;
-  font-size: 10px;
-  font-weight: 560;
-  cursor: pointer;
-  transition: color 150ms ease;
+.inspector-shell__top {
+  padding: 0 18px;
+  border-bottom: 1px solid var(--line);
 }
 
-.inspector-tabs button::after {
+.inspector-shell__body {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 164px minmax(0, 1fr);
+}
+
+.inspector-shell__left {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  padding: 14px 12px;
+  border-right: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.012);
+}
+
+.inspector-shell__center {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.inspector-shell__bottom {
+  border-top: 1px solid var(--line);
+}
+
+.inspector-topbar {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.inspector-topbar .section-kicker {
+  width: min(180px, 28%);
+}
+
+.inspector-topbar__active {
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  color: var(--muted-2);
+  font: 600 8px/1 ui-monospace, "SFMono-Regular", Consolas, monospace;
+  letter-spacing: 0.11em;
+}
+
+.inspector-topbar__active strong {
+  overflow: hidden;
+  color: #cfd3d6;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.inspector-sections {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.inspector-sections__label {
+  padding: 3px 7px 11px;
+  color: var(--muted-2);
+  font: 600 8px/1 ui-monospace, "SFMono-Regular", Consolas, monospace;
+  letter-spacing: 0.13em;
+}
+
+.inspector-sections__list {
+  display: grid;
+  gap: 4px;
+}
+
+.inspector-sections button {
+  position: relative;
+  width: 100%;
+  height: 34px;
+  padding: 0 8px 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: #777e86;
+  font-size: 9px;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    color 150ms ease,
+    border-color 150ms ease,
+    background 150ms ease,
+    transform 150ms ease;
+}
+
+.inspector-sections button small {
+  color: #444a51;
+  font: 600 7px/1 ui-monospace, "SFMono-Regular", Consolas, monospace;
+  letter-spacing: 0.06em;
+}
+
+.inspector-sections button:hover:not(:disabled) {
+  color: #d4d7da;
+  border-color: var(--line);
+  background: rgba(255, 255, 255, 0.025);
+  transform: translateX(2px);
+}
+
+.inspector-sections button.is-active {
+  color: var(--text);
+  border-color: rgba(167, 255, 215, 0.16);
+  background: rgba(167, 255, 215, 0.045);
+}
+
+.inspector-sections button.is-active::before {
   content: "";
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -1px;
-  height: 1px;
+  left: -13px;
+  width: 1px;
+  height: 16px;
   background: var(--accent);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 180ms ease;
+  box-shadow: 0 0 10px rgba(104, 247, 184, 0.45);
 }
 
-.inspector-tabs button:hover:not(:disabled) {
-  color: #c5c9ce;
+.inspector-sections button.is-active small {
+  color: var(--accent);
 }
 
-.inspector-tabs button.is-active {
-  color: var(--text);
-}
-
-.inspector-tabs button.is-active::after {
-  transform: scaleX(1);
-}
-
-.inspector-tabs button:disabled {
-  opacity: 0.42;
+.inspector-sections button:disabled {
+  opacity: 0.32;
   cursor: default;
 }
 
 .inspector-stage {
   position: relative;
+  width: 100%;
+  height: 100%;
   min-height: 0;
   overflow: hidden;
+}
+
+.inspector-bottom-state {
+  height: 100%;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--muted-2);
+  font: 600 8px/1 ui-monospace, "SFMono-Regular", Consolas, monospace;
+  letter-spacing: 0.12em;
+}
+
+.inspector-bottom-state strong {
+  color: #747b82;
+  font-weight: 600;
 }
 
 .inspector-empty,
@@ -888,16 +1003,19 @@ button:disabled {
 }
 
 .signal-strip {
-  margin-top: auto;
-  padding-top: clamp(22px, 4vh, 40px);
+  width: 100%;
+  height: 100%;
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  border-top: 1px solid var(--line);
 }
 
 .signal {
   min-width: 0;
-  padding: 10px 12px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   border-right: 1px solid var(--line);
 }
 
@@ -914,9 +1032,8 @@ button:disabled {
 
 .signal strong {
   display: block;
-  margin-top: 7px;
   color: #6c737b;
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .signal--present strong {
@@ -1206,24 +1323,16 @@ button:disabled {
     padding-inline: 28px;
   }
 
-  .inspector-tabs {
-    gap: 14px;
+  .inspector-shell__body {
+    grid-template-columns: 146px minmax(0, 1fr);
   }
 
   .signal-grid {
     gap: 22px 28px;
   }
 
-  .signal-strip {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .signal:nth-child(3) {
-    border-right: 0;
-  }
-
-  .signal:nth-child(-n + 3) {
-    border-bottom: 1px solid var(--line);
+  .signal {
+    padding-inline: 9px;
   }
 }
 
@@ -1248,6 +1357,23 @@ button:disabled {
 
   .operation-button {
     height: 31px;
+  }
+
+  .inspector-shell {
+    grid-template-rows: 48px minmax(0, 1fr) 46px;
+  }
+
+  .inspector-shell__left {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .inspector-sections__list {
+    gap: 2px;
+  }
+
+  .inspector-sections button {
+    height: 30px;
   }
 
   .result-view {
