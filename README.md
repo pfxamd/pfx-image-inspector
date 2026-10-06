@@ -17,9 +17,12 @@ Early foundation work for `v0.1`. The repository currently focuses on the metada
 
 ## Validation
 
-`pnpm corpus` downloads a pinned reference corpus, generates ExifTool
-references, and compares PFx canonical fields without storing metadata values
-in the report.
+`pnpm corpus` downloads a pinned multi-source reference corpus, verifies every
+binary by Git blob SHA and byte size, generates ExifTool references, and
+compares PFx canonical fields without storing metadata values in the report.
+
+The report includes aggregate and per-format completeness/agreement metrics,
+plus separate robustness cases for malformed inputs.
 
 ## License
 

@@ -10,25 +10,32 @@ pnpm corpus
 
 This performs four steps:
 
-1. Download selected upstream fixtures pinned to an exact commit.
-2. Verify each fixture against its expected Git blob SHA and byte size.
+1. Download selected upstream fixtures pinned to exact commits.
+2. Verify every fixture against its expected Git blob SHA and byte size.
 3. Generate an ExifTool reference for a controlled set of canonical fields.
-4. Inspect the same files with PFx and write comparison reports.
+4. Inspect the same files with PFx and write aggregate and per-format reports.
 
 Generated files are written under `fixtures/reference/generated/` and corpus
 binaries under `fixtures/reference/files/`. Both directories are ignored by
 Git.
 
-The comparison report never writes metadata values. It records only field
-status and aggregate completeness/agreement metrics.
+The report never stores metadata values. It records only comparison status,
+warnings, structured-error names, completeness, and agreement.
 
-The first corpus deliberately stays small:
+## Coverage
 
-- JPEG with IPTC
+The corpus contains 51 pinned samples across:
+
+- JPEG
 - TIFF
-- AVIF
+- PNG
+- WebP
 - HEIC
-- malformed JPEG robustness case
+- AVIF
 
-Synthetic WebP integration fixtures remain in the unit test suite because the
-upstream reference source does not contain a suitable WebP fixture.
+It includes ordinary camera images, IPTC/XMP/ICC-heavy images, no-metadata
+images, all eight EXIF orientation values, and malformed/edge-case files.
+
+Robustness samples are successful when PFx either completes inspection safely
+or returns a controlled error. They do not contribute to metadata
+completeness/agreement scores.

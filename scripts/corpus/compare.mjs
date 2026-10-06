@@ -16,6 +16,8 @@ const reference = JSON.parse(
 );
 
 const mappings = [
+  ["FileType", (result) => result.file.format],
+  ["MIMEType", (result) => result.file.mime],
   ["ImageWidth", (result) => result.image.width],
   ["ImageHeight", (result) => result.image.height],
   ["Orientation", (result) => result.image.orientation],
@@ -41,14 +43,12 @@ const mappings = [
 ];
 
 const samples = [];
-let totalExpected = 0;
-let totalRecovered = 0;
-let totalComparable = 0;
-let totalMatches = 0;
-let inspectionFailures = 0;
+const totals = createTotals();
+const formats = new Map();
 
 for (const sample of manifest.samples) {
   const ref = reference.references[sample.id];
+  const formatTotals = getFormatTotals(sample.format);
 
   try {
     const bytes = await readFile(samplePath(sample));
@@ -57,6 +57,11 @@ for (const sample of manifest.samples) {
     );
 
     if (sample.robustnessOnly) {
+      totals.robustnessSamples += 1;
+      totals.robustnessCompleted += 1;
+      formatTotals.robustnessSamples += 1;
+      formatTotals.robustnessCompleted += 1;
+
       samples.push({
         id: sample.id,
         format: sample.format,
@@ -68,6 +73,8 @@ for (const sample of manifest.samples) {
     }
 
     const fields = [];
+    totals.samples += 1;
+    formatTotals.samples += 1;
 
     for (const [name, getter] of mappings) {
       const expected = ref?.fields?.[name];
@@ -75,16 +82,30 @@ for (const sample of manifest.samples) {
       const expectedPresent = hasValue(expected);
       const actualPresent = hasValue(actual);
 
-      if (expectedPresent) totalExpected += 1;
-      if (expectedPresent && actualPresent) totalRecovered += 1;
+      if (expectedPresent) {
+        totals.expectedFields += 1;
+        formatTotals.expectedFields += 1;
+      }
+
+      if (expectedPresent && actualPresent) {
+        totals.recoveredFields += 1;
+        formatTotals.recoveredFields += 1;
+      }
 
       let status = "not-applicable";
+
       if (expectedPresent && !actualPresent) {
         status = "missing";
       } else if (expectedPresent && actualPresent) {
-        totalComparable += 1;
+        totals.comparableFields += 1;
+        formatTotals.comparableFields += 1;
+
         status = equivalent(name, expected, actual) ? "match" : "mismatch";
-        if (status === "match") totalMatches += 1;
+
+        if (status === "match") {
+          totals.matchingFields += 1;
+          formatTotals.matchingFields += 1;
+        }
       }
 
       if (expectedPresent || actualPresent) {
@@ -115,35 +136,51 @@ for (const sample of manifest.samples) {
       warnings: result.warnings.map((warning) => warning.code),
     });
   } catch (error) {
-    inspectionFailures += 1;
+    if (sample.robustnessOnly) {
+      totals.robustnessSamples += 1;
+      totals.robustnessControlledErrors += 1;
+      formatTotals.robustnessSamples += 1;
+      formatTotals.robustnessControlledErrors += 1;
+
+      samples.push({
+        id: sample.id,
+        format: sample.format,
+        robustnessOnly: true,
+        inspection: "controlled_error",
+        error: error instanceof Error ? error.name : "UnknownError",
+      });
+      continue;
+    }
+
+    totals.inspectionFailures += 1;
+    formatTotals.inspectionFailures += 1;
+
     samples.push({
       id: sample.id,
       format: sample.format,
-      robustnessOnly: Boolean(sample.robustnessOnly),
+      robustnessOnly: false,
       inspection: "failed",
       error: error instanceof Error ? error.name : "UnknownError",
     });
   }
 }
 
-const summary = {
-  samples: manifest.samples.length,
-  inspectionFailures,
-  expectedFields: totalExpected,
-  recoveredFields: totalRecovered,
-  completeness:
-    totalExpected === 0 ? 1 : round(totalRecovered / totalExpected),
-  comparableFields: totalComparable,
-  matchingFields: totalMatches,
-  agreement:
-    totalComparable === 0 ? 1 : round(totalMatches / totalComparable),
-};
+const summary = finishTotals({
+  ...totals,
+  corpusSamples: manifest.samples.length,
+});
 
-const report = { summary, samples };
+const byFormat = Object.fromEntries(
+  [...formats.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([format, value]) => [format, finishTotals(value)]),
+);
+
+const report = { summary, byFormat, samples };
 await writeJson(outputPath("comparison.json"), report);
 await writeFile(outputPath("comparison.md"), renderMarkdown(report));
 
-console.log(JSON.stringify(summary, null, 2));
+console.log(JSON.stringify({ summary, byFormat }, null, 2));
 
 for (const sample of samples) {
   if (sample.robustnessOnly || !Array.isArray(sample.fields)) continue;
@@ -160,6 +197,7 @@ for (const sample of samples) {
       JSON.stringify(
         {
           sample: sample.id,
+          format: sample.format,
           missing,
           mismatch,
         },
@@ -170,7 +208,44 @@ for (const sample of samples) {
   }
 }
 
-if (inspectionFailures > 0) process.exitCode = 1;
+if (summary.inspectionFailures > 0) process.exitCode = 1;
+
+function createTotals() {
+  return {
+    samples: 0,
+    inspectionFailures: 0,
+    expectedFields: 0,
+    recoveredFields: 0,
+    comparableFields: 0,
+    matchingFields: 0,
+    robustnessSamples: 0,
+    robustnessCompleted: 0,
+    robustnessControlledErrors: 0,
+  };
+}
+
+function getFormatTotals(format) {
+  let current = formats.get(format);
+  if (!current) {
+    current = createTotals();
+    formats.set(format, current);
+  }
+  return current;
+}
+
+function finishTotals(value) {
+  return {
+    ...value,
+    completeness:
+      value.expectedFields === 0
+        ? 1
+        : round(value.recoveredFields / value.expectedFields),
+    agreement:
+      value.comparableFields === 0
+        ? 1
+        : round(value.matchingFields / value.comparableFields),
+  };
+}
 
 function hasValue(value) {
   return value !== null && value !== undefined && value !== "";
@@ -183,6 +258,15 @@ function equivalent(name, expected, actual) {
       name === "ExposureTime" ? 1e-7 :
       1e-6;
     return Math.abs(expected - actual) <= tolerance;
+  }
+
+  if (name === "FileType") {
+    return normalizeFileType(expected) === normalizeFileType(actual);
+  }
+
+  if (name === "MIMEType") {
+    return String(expected).trim().toLowerCase() ===
+      String(actual).trim().toLowerCase();
   }
 
   if (name === "ExifVersion") {
@@ -199,6 +283,14 @@ function equivalent(name, expected, actual) {
 
   return String(expected).trim().toLowerCase() ===
     String(actual).trim().toLowerCase();
+}
+
+function normalizeFileType(value) {
+  const text = String(value).trim().toLowerCase();
+  if (text === "jpg") return "jpeg";
+  if (text === "tif") return "tiff";
+  if (text === "heif") return "heic";
+  return text;
 }
 
 function normalizeVersion(value) {
@@ -246,14 +338,32 @@ function renderMarkdown(report) {
   const lines = [
     "# PFx Reference Corpus Report",
     "",
-    `- Samples: ${report.summary.samples}`,
+    `- Corpus samples: ${report.summary.corpusSamples}`,
+    `- Comparable samples: ${report.summary.samples}`,
+    `- Robustness samples: ${report.summary.robustnessSamples}`,
     `- Inspection failures: ${report.summary.inspectionFailures}`,
     `- Completeness: ${percent(report.summary.completeness)} (${report.summary.recoveredFields}/${report.summary.expectedFields})`,
     `- Agreement: ${percent(report.summary.agreement)} (${report.summary.matchingFields}/${report.summary.comparableFields})`,
     "",
+    "## By format",
+    "",
+    "| Format | Samples | Completeness | Agreement | Failures | Robustness |",
+    "| --- | ---: | ---: | ---: | ---: | ---: |",
+  ];
+
+  for (const [format, stats] of Object.entries(report.byFormat)) {
+    lines.push(
+      `| ${format} | ${stats.samples} | ${percent(stats.completeness)} | ${percent(stats.agreement)} | ${stats.inspectionFailures} | ${stats.robustnessSamples} |`,
+    );
+  }
+
+  lines.push(
+    "",
+    "## Samples",
+    "",
     "| Sample | Format | Result | Match | Missing | Mismatch |",
     "| --- | --- | --- | ---: | ---: | ---: |",
-  ];
+  );
 
   for (const sample of report.samples) {
     if (sample.robustnessOnly) {

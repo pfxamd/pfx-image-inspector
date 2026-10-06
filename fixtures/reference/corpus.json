@@ -1,51 +1,481 @@
 {
-  "schemaVersion": 1,
-  "source": {
-    "repository": "MikeKovarik/exifr",
-    "commit": "6cbf6e921688faf7723e1f2e0b9e672d1f0aa21c",
-    "license": "MIT"
+  "schemaVersion": 2,
+  "sources": {
+    "exifr": {
+      "repository": "MikeKovarik/exifr",
+      "commit": "6cbf6e921688faf7723e1f2e0b9e672d1f0aa21c",
+      "license": "MIT"
+    },
+    "libwebp": {
+      "repository": "webmproject/libwebp",
+      "commit": "87b985f8d97033e35009d4ac198f6a23199ef40e",
+      "license": "BSD-3-Clause"
+    }
   },
   "samples": [
     {
-      "id": "jpeg-iptc",
+      "id": "jpeg-bonton",
       "format": "jpeg",
-      "path": "BonTonARTSTORplusIPTC.jpg",
+      "path": "jpeg-bonton.jpg",
+      "source": "exifr",
       "sourcePath": "test/fixtures/BonTonARTSTORplusIPTC.jpg",
       "size": 77296,
       "gitBlobSha": "86aa3b867dc3bd034ca9be6a4b68fd3f06c29c33"
     },
     {
-      "id": "tiff-reference",
+      "id": "jpeg-bush-dog",
+      "format": "jpeg",
+      "path": "jpeg-bush-dog.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/Bush-dog.jpg",
+      "size": 67715,
+      "gitBlobSha": "f52a754e261386b121781da161d9a3f15d00939f"
+    },
+    {
+      "id": "jpeg-canon-dslr",
+      "format": "jpeg",
+      "path": "jpeg-canon-dslr.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/canon-dslr.jpg",
+      "size": 2090815,
+      "gitBlobSha": "598257c86a46e46053a9135c82f309ff7b1956b0"
+    },
+    {
+      "id": "jpeg-cookiezen",
+      "format": "jpeg",
+      "path": "jpeg-cookiezen.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/cookiezen.jpg",
+      "size": 668969,
+      "gitBlobSha": "15d012561c5869faa998be8f6ba8806448d8066c"
+    },
+    {
+      "id": "jpeg-door-knocker",
+      "format": "jpeg",
+      "path": "jpeg-door-knocker.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/door-knocker.jpg",
+      "size": 233010,
+      "gitBlobSha": "accbd411d1aec615280d67d1886240d377237599"
+    },
+    {
+      "id": "jpeg-empty-description",
+      "format": "jpeg",
+      "path": "jpeg-empty-description.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/empty-imagedesc-in-ifd0.jpg",
+      "size": 159137,
+      "gitBlobSha": "cbc95948cb75e12be56ffd06118dddf9b55967e2"
+    },
+    {
+      "id": "jpeg-jfif-only",
+      "format": "jpeg",
+      "path": "jpeg-jfif-only.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/image9_14.jpg",
+      "size": 3969,
+      "gitBlobSha": "49b6ec17dd44001b46783e116b442b37fbec0305"
+    },
+    {
+      "id": "jpeg-img1771",
+      "format": "jpeg",
+      "path": "jpeg-img1771.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/img_1771.jpg",
+      "size": 32764,
+      "gitBlobSha": "933719d1cf71cfe3e1794e258eb56a2c15c6fa40"
+    },
+    {
+      "id": "jpeg-img1771-no-exif",
+      "format": "jpeg",
+      "path": "jpeg-img1771-no-exif.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/img_1771_no_exif.jpg",
+      "size": 25084,
+      "gitBlobSha": "4e419ce8bce248d28db01f78fc00ba29e822b8e6"
+    },
+    {
+      "id": "jpeg-iptc-agency",
+      "format": "jpeg",
+      "path": "jpeg-iptc-agency.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/iptc-agency-photographer-example.jpg",
+      "size": 99706,
+      "gitBlobSha": "c965f6b24558a8ed366c597687cbcfab6c70a00f"
+    },
+    {
+      "id": "jpeg-iptc-independent",
+      "format": "jpeg",
+      "path": "jpeg-iptc-independent.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/iptc-independent-photographer-example.jpg",
+      "size": 104024,
+      "gitBlobSha": "20d0841754494a031f994dafd7b32d9edc05a026"
+    },
+    {
+      "id": "jpeg-iptc-staff",
+      "format": "jpeg",
+      "path": "jpeg-iptc-staff.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/iptc-staff-photographer-example.jpg",
+      "size": 109317,
+      "gitBlobSha": "05383f8bc4845ff180004e5b40c2271235401f96"
+    },
+    {
+      "id": "jpeg-issue-exifr-13",
+      "format": "jpeg",
+      "path": "jpeg-issue-exifr-13.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/issue-exifr-13.jpg",
+      "size": 52297,
+      "gitBlobSha": "ab1a7b3e60db10a2afc92e2f134e21e257c0c14d"
+    },
+    {
+      "id": "jpeg-issue-exifr-3",
+      "format": "jpeg",
+      "path": "jpeg-issue-exifr-3.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/issue-exifr-3.jpg",
+      "size": 761746,
+      "gitBlobSha": "eb454f8e60939d313645c67d825dc1a047a89dbd"
+    },
+    {
+      "id": "jpeg-issue-exifr-4",
+      "format": "jpeg",
+      "path": "jpeg-issue-exifr-4.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/issue-exifr-4.jpg",
+      "size": 3175,
+      "gitBlobSha": "dec4556d68cc507d579c8a89c251914eb8aec9ed"
+    },
+    {
+      "id": "jpeg-issue-exifr-36",
+      "format": "jpeg",
+      "path": "jpeg-issue-exifr-36.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/issue-exifr-36.jpg",
+      "size": 5958,
+      "gitBlobSha": "29b3651176f75acc35fcda7a0bbd1a26f09407f3"
+    },
+    {
+      "id": "jpeg-issue-exifr-59",
+      "format": "jpeg",
+      "path": "jpeg-issue-exifr-59.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/issue-exifr-59.jpg",
+      "size": 38087,
+      "gitBlobSha": "d18e2aa05205b68145588f66b638e5c7e7bc7b68"
+    },
+    {
+      "id": "jpeg-issue-fast-exif-2",
+      "format": "jpeg",
+      "path": "jpeg-issue-fast-exif-2.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/issue-fast-exif-2.jpg",
+      "size": 172193,
+      "gitBlobSha": "229c9445e21d95401879f1c2a443a4e326897d4d"
+    },
+    {
+      "id": "jpeg-issue-node-exif-58",
+      "format": "jpeg",
+      "path": "jpeg-issue-node-exif-58.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/issue-node-exif-58.jpg",
+      "size": 4572,
+      "gitBlobSha": "fb0902587bb7ed28ab257c35736e8364ffb5225d"
+    },
+    {
+      "id": "jpeg-noexif",
+      "format": "jpeg",
+      "path": "jpeg-noexif.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/noexif.jpg",
+      "size": 8318,
+      "gitBlobSha": "c1ac01038551a70d81e322c8bfa47dfdd8f31cb5"
+    },
+    {
+      "id": "jpeg-orientation-1",
+      "format": "jpeg",
+      "path": "jpeg-orientation-1.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/orientation/f1t.jpg",
+      "size": 841,
+      "gitBlobSha": "1aa26b4358bebc03e2acad0dafbd696ad297a2d5"
+    },
+    {
+      "id": "jpeg-orientation-2",
+      "format": "jpeg",
+      "path": "jpeg-orientation-2.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/orientation/f2t.jpg",
+      "size": 441,
+      "gitBlobSha": "15065b08c32b7f2cb2d5ea86095fb91236ff8cb4"
+    },
+    {
+      "id": "jpeg-orientation-3",
+      "format": "jpeg",
+      "path": "jpeg-orientation-3.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/orientation/f3t.jpg",
+      "size": 439,
+      "gitBlobSha": "b783b6b8db433184f5b693eea88b03ca11663c9d"
+    },
+    {
+      "id": "jpeg-orientation-4",
+      "format": "jpeg",
+      "path": "jpeg-orientation-4.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/orientation/f4t.jpg",
+      "size": 441,
+      "gitBlobSha": "6928bc8d5b8b60a84270700f38ab98a2cfebda9f"
+    },
+    {
+      "id": "jpeg-orientation-5",
+      "format": "jpeg",
+      "path": "jpeg-orientation-5.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/orientation/f5t.jpg",
+      "size": 432,
+      "gitBlobSha": "81b224b3330ff775143eb8b0351fa42acf7fc44d"
+    },
+    {
+      "id": "jpeg-orientation-6",
+      "format": "jpeg",
+      "path": "jpeg-orientation-6.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/orientation/f6t.jpg",
+      "size": 434,
+      "gitBlobSha": "e5d224249b906d7dedd480e4421d7caeb43b601c"
+    },
+    {
+      "id": "jpeg-orientation-7",
+      "format": "jpeg",
+      "path": "jpeg-orientation-7.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/orientation/f7t.jpg",
+      "size": 432,
+      "gitBlobSha": "ff09095e767c6032bed3650798b72a3001bd0677"
+    },
+    {
+      "id": "jpeg-orientation-8",
+      "format": "jpeg",
+      "path": "jpeg-orientation-8.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/orientation/f8t.jpg",
+      "size": 434,
+      "gitBlobSha": "35eca2fe0ee9f1490c8998207bbde3ad49f8fbfc"
+    },
+    {
+      "id": "jpeg-broken-range-length",
+      "format": "jpeg",
+      "path": "jpeg-broken-range-length.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/RangeError_Invalid_typed_array_length.jpg",
+      "size": 7957,
+      "gitBlobSha": "9ad7f2fb65fdd5d459299b06e4420f813d2d25e2",
+      "robustnessOnly": true
+    },
+    {
+      "id": "jpeg-broken-range-offset",
+      "format": "jpeg",
+      "path": "jpeg-broken-range-offset.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/RangeError_Offset_outside_bounds.jpg",
+      "size": 4789,
+      "gitBlobSha": "2f0efffe0f2295a285fb8a5251b7ed32b91ed196",
+      "robustnessOnly": true
+    },
+    {
+      "id": "jpeg-broken1",
+      "format": "jpeg",
+      "path": "jpeg-broken1.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/broken1.jpg",
+      "size": 105664,
+      "gitBlobSha": "6c1312a67ff1b1db493c65ee0b3889f3fb9bb576",
+      "robustnessOnly": true
+    },
+    {
+      "id": "jpeg-unreachable-segment",
+      "format": "jpeg",
+      "path": "jpeg-unreachable-segment.jpg",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/issue-exifr-41-Error_Segment_Unreachable.jpg",
+      "size": 35331,
+      "gitBlobSha": "9b4d1141594ef7a38ee5148b85834285a52fa9b6",
+      "robustnessOnly": true
+    },
+    {
+      "id": "tiff-001",
       "format": "tiff",
-      "path": "Bush-dog.tif",
+      "path": "tiff-001.tif",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/001.tif",
+      "size": 679024,
+      "gitBlobSha": "7ceeb6ddcd5e3190351b3b36b47320d21337ce2d"
+    },
+    {
+      "id": "tiff-002",
+      "format": "tiff",
+      "path": "tiff-002.tiff",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/002.tiff",
+      "size": 700121,
+      "gitBlobSha": "0f22f55a7b958689cdb242e8d64e561ff6dccb8e"
+    },
+    {
+      "id": "tiff-bush-dog",
+      "format": "tiff",
+      "path": "tiff-bush-dog.tif",
+      "source": "exifr",
       "sourcePath": "test/fixtures/Bush-dog.tif",
       "size": 29068,
       "gitBlobSha": "dc60ecfe60cb836197c0ddb6e49a08b4c44453df"
     },
     {
-      "id": "avif-reference",
-      "format": "avif",
-      "path": "Irvine_CA.avif",
-      "sourcePath": "test/fixtures/avif/Irvine_CA.avif",
-      "size": 28133,
-      "gitBlobSha": "63f79a96863f959aa2b4f2550d39423275d6bb6c"
+      "id": "tiff-exif-js-124",
+      "format": "tiff",
+      "path": "tiff-exif-js-124.tiff",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/issue-exif-js-124.tiff",
+      "size": 661160,
+      "gitBlobSha": "de693bb4b037f5fc0d6915776a8ed12296f32a9f"
     },
     {
-      "id": "heic-reference",
+      "id": "tiff-iptc-icc-xmp",
+      "format": "tiff",
+      "path": "tiff-iptc-icc-xmp.tif",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/tif-with-iptc-icc-xmp.tif",
+      "size": 33752,
+      "gitBlobSha": "48f344c0d72bf81cc58cad0482421fc6dac2c036"
+    },
+    {
+      "id": "png-reference-1",
+      "format": "png",
+      "path": "png-reference-1.png",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/png/IMG_20180725_163423-1.png",
+      "size": 6095,
+      "gitBlobSha": "d951bc5f063789a0530c652573f4c830e6184d27"
+    },
+    {
+      "id": "png-reference-2",
+      "format": "png",
+      "path": "png-reference-2.png",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/png/IMG_20180725_163423-2.png",
+      "size": 4736,
+      "gitBlobSha": "8cff233a13144c2e1cb315fafd2a5c73d17441eb"
+    },
+    {
+      "id": "png-exif-gps",
+      "format": "png",
+      "path": "png-exif-gps.png",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/png/png_with_exif_and_gps.png",
+      "size": 9331,
+      "gitBlobSha": "2af2940aba5439bf683b3729e451e84268ca0298"
+    },
+    {
+      "id": "png-invalid-iccp",
+      "format": "png",
+      "path": "png-invalid-iccp.png",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/png/invalid-iCCP-missing-adler32-checksum.png",
+      "size": 22661,
+      "gitBlobSha": "d32c9d5d6a73f365db1ca2c86e25def87165049c",
+      "robustnessOnly": true
+    },
+    {
+      "id": "heic-collection",
       "format": "heic",
       "path": "heic-collection.heic",
+      "source": "exifr",
       "sourcePath": "test/fixtures/heic-collection.heic",
       "size": 458669,
       "gitBlobSha": "72ccf5bdca5e683ac6e7093af69f8f874b71af5d"
     },
     {
-      "id": "jpeg-malformed",
-      "format": "jpeg",
-      "path": "RangeError_Offset_outside_bounds.jpg",
-      "sourcePath": "test/fixtures/RangeError_Offset_outside_bounds.jpg",
-      "size": 4789,
-      "gitBlobSha": "2f0efffe0f2295a285fb8a5251b7ed32b91ed196",
-      "robustnessOnly": true
+      "id": "heic-empty",
+      "format": "heic",
+      "path": "heic-empty.heic",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/heic-empty.heic",
+      "size": 2994394,
+      "gitBlobSha": "7ba28200ec4a50fbbe1a3ced169f69d52c68aae5"
+    },
+    {
+      "id": "heic-iphone",
+      "format": "heic",
+      "path": "heic-iphone.heic",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/heic-iphone.heic",
+      "size": 2600220,
+      "gitBlobSha": "9f10121906d1811682c2d0403aadd5fc2cfa5df6"
+    },
+    {
+      "id": "heic-iphone7",
+      "format": "heic",
+      "path": "heic-iphone7.heic",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/heic-iphone7.heic",
+      "size": 1764955,
+      "gitBlobSha": "1055d355577439830954f4cdcf0f2e34e79102b7"
+    },
+    {
+      "id": "heic-maybebroken",
+      "format": "heic",
+      "path": "heic-maybebroken.heic",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/heic-maybebroken.HEIC",
+      "size": 1499892,
+      "gitBlobSha": "9c6318248a2d0695ec6e714b1dbb738dc97f6554"
+    },
+    {
+      "id": "heic-single",
+      "format": "heic",
+      "path": "heic-single.heic",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/heic-single.heic",
+      "size": 293608,
+      "gitBlobSha": "00cc549c037e4241d6e3c739a409fb318e82dd9a"
+    },
+    {
+      "id": "avif-irvine",
+      "format": "avif",
+      "path": "avif-irvine.avif",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/avif/Irvine_CA.avif",
+      "size": 28133,
+      "gitBlobSha": "63f79a96863f959aa2b4f2550d39423275d6bb6c"
+    },
+    {
+      "id": "avif-micro",
+      "format": "avif",
+      "path": "avif-micro.avif",
+      "source": "exifr",
+      "sourcePath": "test/fixtures/avif/IMG_20180725_163423-micro.avif",
+      "size": 2559,
+      "gitBlobSha": "855c244888eb513cbb9e46c904b95301f09db61f"
+    },
+    {
+      "id": "webp-libwebp-small",
+      "format": "webp",
+      "path": "webp-libwebp-small.webp",
+      "source": "libwebp",
+      "sourcePath": "examples/test.webp",
+      "size": 4880,
+      "gitBlobSha": "3e4bca1d8500ec465177ebac7c30d6cfde656c10"
+    },
+    {
+      "id": "webp-libwebp-js",
+      "format": "webp",
+      "path": "webp-libwebp-js.webp",
+      "source": "libwebp",
+      "sourcePath": "webp_js/test_webp_js.webp",
+      "size": 1321542,
+      "gitBlobSha": "f798f5563e4fa21e8784067ed1a0cd5d81239c3b"
     }
   ]
 }

@@ -13,6 +13,11 @@ let downloaded = 0;
 let reused = 0;
 
 for (const sample of manifest.samples) {
+  const source = manifest.sources?.[sample.source];
+  if (!source) {
+    throw new Error(`Unknown corpus source "${sample.source}" for ${sample.id}.`);
+  }
+
   const path = samplePath(sample);
   let existing = null;
 
@@ -30,8 +35,8 @@ for (const sample of manifest.samples) {
   }
 
   const url =
-    `https://raw.githubusercontent.com/${manifest.source.repository}/` +
-    `${manifest.source.commit}/${sample.sourcePath}`;
+    `https://raw.githubusercontent.com/${source.repository}/` +
+    `${source.commit}/${sample.sourcePath}`;
 
   const response = await fetch(url);
   if (!response.ok) {
