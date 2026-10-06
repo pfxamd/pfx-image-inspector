@@ -17,13 +17,16 @@
     "corpus:fetch": "node scripts/corpus/fetch.mjs",
     "corpus:reference": "node scripts/corpus/exiftool-reference.mjs",
     "corpus:compare": "node scripts/corpus/compare.mjs",
-    "corpus": "pnpm corpus:fetch && pnpm build && pnpm corpus:reference && pnpm corpus:compare"
+    "corpus": "pnpm corpus:fetch && pnpm build && pnpm corpus:reference && pnpm corpus:compare",
+    "test:browser": "playwright test -c playwright.config.ts",
+    "test:browser:headed": "playwright test -c playwright.config.ts --headed"
   },
   "devDependencies": {
     "eslint": "^10.10.0",
     "prettier": "^3.9.9",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
     "typescript-eslint": "^8.71.0",
-    "@typescript/native": "npm:typescript@^7.0.2"
+    "@typescript/native": "npm:typescript@^7.0.2",
+    "@playwright/test": "1.63.0"
   }
 }

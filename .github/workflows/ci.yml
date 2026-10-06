@@ -38,3 +38,26 @@ jobs:
 
       - name: Reference corpus
         run: pnpm corpus
+
+  browser:
+    runs-on: ubuntu-latest
+    needs: core
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup pnpm and Node
+        uses: pnpm/setup@v1
+        with:
+          runtime: node@24
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Install browser runtimes
+        run: pnpm exec playwright install --with-deps chromium firefox webkit
+
+      - name: Browser worker tests
+        run: pnpm test:browser
+

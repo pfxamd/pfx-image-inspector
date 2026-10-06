@@ -70,6 +70,9 @@ The implementation now includes:
 - C2PA 2.4 embedded-manifest presence detection for JPEG, PNG, WebP, TIFF, HEIC, HEIF, and AVIF
 - raw adapter output behind `includeRaw`
 - structured errors and cancellation
+- dedicated browser Web Worker runtime with explicit cancellation protocol
+- cross-browser Playwright coverage on Chromium, Firefox, and WebKit
+- large-file responsiveness checks
 - unit and integration tests
 
-Cryptographic C2PA verification and the web UI remain separate next layers.
+Cryptographic C2PA verification and the product UI remain separate next layers.

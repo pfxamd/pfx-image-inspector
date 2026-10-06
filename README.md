@@ -4,7 +4,7 @@ Privacy-first open-source image metadata inspection, designed to run locally wit
 
 ## Status
 
-Early foundation work for `v0.1`. The repository currently focuses on the metadata core, its public contract, format detection, and tests before any UI is introduced.
+Early foundation work for `v0.1`. The metadata core is now connected to a dedicated browser Web Worker and validated across Chromium, Firefox, and WebKit before product UI work begins.
 
 ## Principles
 

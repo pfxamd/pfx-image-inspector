@@ -1,0 +1,23 @@
+{
+  "name": "@pfx/image-inspector-web",
+  "version": "0.1.0-alpha.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "predev": "pnpm --filter @pfx/metadata-core build",
+    "dev": "vite",
+    "prebuild": "pnpm --filter @pfx/metadata-core build",
+    "build": "vite build",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@pfx/metadata-core": "workspace:*",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "vite": "8.3.2"
+  }
+}
