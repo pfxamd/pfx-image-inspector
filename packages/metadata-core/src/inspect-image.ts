@@ -1,4 +1,5 @@
-import { analyzePrivacy } from "./analysis/privacy/analyze-privacy.js";\nimport { defaultAdapterRegistry } from "./adapters/default-registry.js";
+import { analyzePrivacy } from "./analysis/privacy/analyze-privacy.js";
+import { defaultAdapterRegistry } from "./adapters/default-registry.js";
 import type { InspectionContext } from "./adapters/adapter.js";
 import { INSPECTION_ERROR_CODES } from "./errors/error-codes.js";
 import { InspectionError } from "./errors/inspection-error.js";
