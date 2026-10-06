@@ -7,6 +7,7 @@ export type { InspectionErrorCode } from "./errors/error-codes.js";
 export { InspectionError } from "./errors/inspection-error.js";
 export { inspectImage } from "./inspect-image.js";
 export type {
+  C2paEmbedding,
   CameraInfo,
   ColorInfo,
   FileInfo,
@@ -27,6 +28,7 @@ export type {
   ProvenanceInfo,
   RawMetadata,
   SoftwareInfo,
+  StandardDescriptor,
   StandardsInfo,
   TimestampInfo,
 } from "./model/public.js";

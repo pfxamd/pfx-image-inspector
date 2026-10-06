@@ -97,18 +97,33 @@ export interface IntegrityAnalysis {
   findings: IntegrityFinding[];
 }
 
-export interface StandardsInfo {
-  exif: MetadataStatus;
-  xmp: MetadataStatus;
-  iptc: MetadataStatus;
-  icc: MetadataStatus;
-  jfif: MetadataStatus;
+export interface StandardDescriptor {
+  status: MetadataStatus;
+  version: string | null;
+  evidence: string[];
 }
+
+export interface StandardsInfo {
+  exif: StandardDescriptor;
+  xmp: StandardDescriptor;
+  iptc: StandardDescriptor;
+  icc: StandardDescriptor;
+  jfif: StandardDescriptor;
+}
+
+export type C2paEmbedding =
+  | "jpeg_app11"
+  | "png_caBX"
+  | "webp_C2PA"
+  | "tiff_tag_0xcd41"
+  | "bmff_uuid";
 
 export interface ProvenanceInfo {
   c2pa: {
     status: "not_checked" | "not_detected" | "detected" | "malformed" | "unsupported";
     verification: "not_attempted";
+    embedding: C2paEmbedding | null;
+    evidenceOffset: number | null;
   };
 }
 

@@ -61,9 +61,12 @@ The implementation now includes:
 - exifr adapter
 - canonical metadata normalization
 - structured metadata statuses
+- standards detection with embedded version evidence where available
+- explainable privacy analysis
+- conservative integrity and consistency analysis
+- C2PA 2.4 embedded-manifest presence detection for JPEG, PNG, WebP, TIFF, HEIC, HEIF, and AVIF
 - raw adapter output behind `includeRaw`
 - structured errors and cancellation
 - unit and integration tests
 
-Privacy rules, integrity rules, C2PA detection, and the web UI remain separate
-next layers.
+Cryptographic C2PA verification and the web UI remain separate next layers.

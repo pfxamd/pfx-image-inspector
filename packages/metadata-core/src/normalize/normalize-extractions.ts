@@ -3,6 +3,7 @@ import type {
   MetadataBlockKey,
   SourceBlockKey,
 } from "../adapters/adapter.js";
+import { detectStandards } from "../standards/detect-standards.js";
 import type {
   CameraInfo,
   ColorInfo,
@@ -41,14 +42,14 @@ export function normalizeExtractions(
   };
 
   const metadata = {} as MetadataCollection;
-  const standards = {} as StandardsInfo;
 
   for (const key of Object.keys(blocks) as MetadataBlockKey[]) {
     const status = resolveStatus(key, blocks[key], results);
     const block: MetadataBlock = { status, entries: blocks[key] };
     metadata[key] = block;
-    standards[key] = status;
   }
+
+  const standards = detectStandards(metadata);
 
   const imageSource = mergeRecords(sources.header, sources.image, sources.photo);
   const cameraSource = mergeRecords(sources.image, sources.photo);

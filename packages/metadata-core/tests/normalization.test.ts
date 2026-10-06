@@ -27,6 +27,7 @@ describe("metadata normalization", () => {
           Software: "Camera Firmware",
         },
         photo: {
+          ExifVersion: "0310",
           ISO: 100,
           FNumber: 2.8,
           FocalLength: 50,
@@ -43,9 +44,11 @@ describe("metadata normalization", () => {
           CreatorTool: "PFx Test",
         },
         icc: {
+          ProfileVersion: "4.3.0",
           ProfileDescription: "sRGB IEC61966-2.1",
         },
         iptc: {
+          ApplicationRecordVersion: 4,
           CopyrightNotice: "Example",
         },
       },
@@ -83,6 +86,9 @@ describe("metadata normalization", () => {
     expect(result.metadata.iptc.status).toBe("present");
     expect(result.metadata.icc.status).toBe("present");
     expect(result.metadata.jfif.status).toBe("unsupported");
+    expect(result.standards.exif.version).toBe("3.1");
+    expect(result.standards.iptc.version).toBe("4");
+    expect(result.standards.icc.version).toBe("4.3.0");
   });
 
   it("marks supported metadata malformed when its adapter fails", () => {

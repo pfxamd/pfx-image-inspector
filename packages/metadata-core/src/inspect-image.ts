@@ -12,6 +12,7 @@ import type {
   InspectOptions,
 } from "./model/public.js";
 import { normalizeExtractions } from "./normalize/normalize-extractions.js";
+import { detectC2paPresence } from "./provenance/c2pa.js";
 
 const SCHEMA_VERSION = "0.1.0";
 const ENGINE_VERSION = "0.1.0-alpha.0";
@@ -88,10 +89,14 @@ export async function inspectImage(
         },
     standards: canonical.standards,
     provenance: {
-      c2pa: {
-        status: "not_checked",
-        verification: "not_attempted",
-      },
+      c2pa: resolved.detectProvenance
+        ? detectC2paPresence(normalized.bytes, detected.format)
+        : {
+            status: "not_checked",
+            verification: "not_attempted",
+            embedding: null,
+            evidenceOffset: null,
+          },
     },
     warnings: extraction.warnings,
   };

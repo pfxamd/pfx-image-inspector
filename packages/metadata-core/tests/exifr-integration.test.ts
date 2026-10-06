@@ -13,6 +13,8 @@ describe("exifr adapter integration", () => {
     expect(result.metadata.exif.status).toBe("present");
     expect(result.privacy.status).toBe("no_findings");
     expect(result.integrity.status).toBe("no_issues_detected");
+    expect(result.standards.exif.status).toBe("present");
+    expect(result.provenance.c2pa.status).toBe("not_detected");
   });
 });
 
