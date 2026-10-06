@@ -66,7 +66,7 @@ export function normalizeExtractions(
       iptc: sources.iptc ?? {},
     }),
     software: normalizeSoftware(
-      mergeRecords(sources.image, sources.photo, sources.xmp),
+      mergeRecords(sources.header, sources.image, sources.photo, sources.xmp),
     ),
     metadata,
     standards,

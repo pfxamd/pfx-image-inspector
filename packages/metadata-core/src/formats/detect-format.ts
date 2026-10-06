@@ -36,7 +36,8 @@ export function detectFormat(bytes: Uint8Array): DetectedFormat {
   } else if (isTiff(bytes)) {
     format = "tiff";
   } else {
-    format = detectIsoBmffImage(bytes);
+    const isoBmff = detectIsoBmffImage(bytes);
+    if (isoBmff !== null) return isoBmff;
   }
 
   if (format === null) {
@@ -70,7 +71,7 @@ function isTiff(bytes: Uint8Array): boolean {
   return littleClassic || bigClassic || littleBigTiff || bigBigTiff;
 }
 
-function detectIsoBmffImage(bytes: Uint8Array): ImageFormat | null {
+function detectIsoBmffImage(bytes: Uint8Array): DetectedFormat | null {
   if (bytes.byteLength < 12 || ascii(bytes, 4, 8) !== "ftyp") return null;
 
   const brands = new Set<string>();
@@ -80,9 +81,33 @@ function detectIsoBmffImage(bytes: Uint8Array): ImageFormat | null {
     brands.add(ascii(bytes, offset, offset + 4));
   }
 
-  if (hasAny(brands, AVIF_BRANDS)) return "avif";
-  if (hasAny(brands, HEIC_BRANDS)) return "heic";
-  if (hasAny(brands, HEIF_BRANDS)) return "heif";
+  if (hasAny(brands, AVIF_BRANDS)) {
+    return {
+      format: "avif",
+      mime: brands.has("avis") ? "image/avif-sequence" : "image/avif",
+    };
+  }
+
+  if (hasAny(brands, HEIC_BRANDS)) {
+    return {
+      format: "heic",
+      mime:
+        brands.has("hevc") || brands.has("hevx")
+          ? "image/heic-sequence"
+          : "image/heic",
+    };
+  }
+
+  if (hasAny(brands, HEIF_BRANDS)) {
+    return {
+      format: "heif",
+      mime:
+        brands.has("msf1") || brands.has("hevs") || brands.has("hevm")
+          ? "image/heif-sequence"
+          : "image/heif",
+    };
+  }
+
   return null;
 }
 

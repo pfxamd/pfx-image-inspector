@@ -77,7 +77,7 @@ for (const sample of manifest.samples) {
     formatTotals.samples += 1;
 
     for (const [name, getter] of mappings) {
-      const expected = ref?.fields?.[name];
+      const expected = expectedField(name, ref?.fields ?? {});
       const actual = getter(result);
       const expectedPresent = hasValue(expected);
       const actualPresent = hasValue(actual);
@@ -245,6 +245,22 @@ function finishTotals(value) {
         ? 1
         : round(value.matchingFields / value.comparableFields),
   };
+}
+
+function expectedField(name, fields) {
+  const value = fields[name];
+
+  if (
+    (name === "XResolution" || name === "YResolution") &&
+    typeof value === "number"
+  ) {
+    const unit = fields.ResolutionUnit;
+    if (unit === 3 || String(unit).trim().toLowerCase().includes("cm")) {
+      return value * 2.54;
+    }
+  }
+
+  return value;
 }
 
 function hasValue(value) {
