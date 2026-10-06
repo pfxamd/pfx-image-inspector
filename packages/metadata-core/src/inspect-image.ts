@@ -1,4 +1,4 @@
-import { defaultAdapterRegistry } from "./adapters/default-registry.js";
+import { analyzePrivacy } from "./analysis/privacy/analyze-privacy.js";\nimport { defaultAdapterRegistry } from "./adapters/default-registry.js";
 import type { InspectionContext } from "./adapters/adapter.js";
 import { INSPECTION_ERROR_CODES } from "./errors/error-codes.js";
 import { InspectionError } from "./errors/inspection-error.js";
@@ -62,10 +62,17 @@ export async function inspectImage(
     timestamps: canonical.timestamps,
     software: canonical.software,
     metadata: canonical.metadata,
-    privacy: {
-      status: "not_analyzed",
-      findings: [],
-    },
+    privacy: resolved.analyzePrivacy
+      ? analyzePrivacy({
+          location: canonical.location,
+          timestamps: canonical.timestamps,
+          software: canonical.software,
+          metadata: canonical.metadata,
+        })
+      : {
+          status: "not_analyzed",
+          findings: [],
+        },
     integrity: {
       status: "not_analyzed",
       findings: [],

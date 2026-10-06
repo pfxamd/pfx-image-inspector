@@ -11,6 +11,7 @@ describe("exifr adapter integration", () => {
     expect(result.image.orientation).toBe(1);
     expect(result.camera?.make).toBe("Canon");
     expect(result.metadata.exif.status).toBe("present");
+    expect(result.privacy.status).toBe("no_findings");
   });
 });
 

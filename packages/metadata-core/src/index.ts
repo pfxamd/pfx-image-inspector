@@ -1,3 +1,5 @@
+export { PRIVACY_FINDING_CODES } from "./analysis/privacy/privacy-codes.js";
+export type { PrivacyFindingCode } from "./analysis/privacy/privacy-codes.js";
 export { INSPECTION_ERROR_CODES } from "./errors/error-codes.js";
 export type { InspectionErrorCode } from "./errors/error-codes.js";
 export { InspectionError } from "./errors/inspection-error.js";
