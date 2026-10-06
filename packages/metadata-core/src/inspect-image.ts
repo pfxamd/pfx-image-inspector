@@ -1,3 +1,5 @@
+import { defaultAdapterRegistry } from "./adapters/default-registry.js";
+import type { InspectionContext } from "./adapters/adapter.js";
 import { INSPECTION_ERROR_CODES } from "./errors/error-codes.js";
 import { InspectionError } from "./errors/inspection-error.js";
 import { detectFormat } from "./formats/detect-format.js";
@@ -6,8 +8,8 @@ import type {
   ImageInput,
   ImageInspectionResult,
   InspectOptions,
-  MetadataBlock,
 } from "./model/public.js";
+import { normalizeExtractions } from "./normalize/normalize-extractions.js";
 
 const SCHEMA_VERSION = "0.1.0";
 const ENGINE_VERSION = "0.1.0-alpha.0";
@@ -30,7 +32,18 @@ export async function inspectImage(
 
   const detected = detectFormat(normalized.bytes);
   const resolved = { ...DEFAULT_OPTIONS, ...options };
-  const unsupportedBlock = (): MetadataBlock => ({ status: "unsupported", entries: {} });
+
+  const context: InspectionContext = {
+    bytes: normalized.bytes,
+    format: detected.format,
+  };
+
+  if (options.signal !== undefined) context.signal = options.signal;
+
+  const extraction = await defaultAdapterRegistry.extract(context);
+  assertNotAborted(options.signal);
+
+  const canonical = normalizeExtractions(extraction.results);
 
   const result: ImageInspectionResult = {
     schemaVersion: SCHEMA_VERSION,
@@ -42,64 +55,40 @@ export async function inspectImage(
       declaredMime: normalized.declaredMime,
       size: normalized.size,
     },
-    image: {
-      width: null,
-      height: null,
-      orientation: null,
-      dpi: null,
-      bitDepth: null,
-    },
-    camera: null,
-    location: null,
-    color: null,
-    timestamps: {
-      takenAt: null,
-      digitizedAt: null,
-      modifiedAt: null,
-    },
-    software: null,
-    metadata: {
-      exif: unsupportedBlock(),
-      xmp: unsupportedBlock(),
-      iptc: unsupportedBlock(),
-      icc: unsupportedBlock(),
-      jfif: unsupportedBlock(),
-    },
+    image: canonical.image,
+    camera: canonical.camera,
+    location: canonical.location,
+    color: canonical.color,
+    timestamps: canonical.timestamps,
+    software: canonical.software,
+    metadata: canonical.metadata,
     privacy: {
-      status: resolved.analyzePrivacy ? "insufficient_metadata" : "not_analyzed",
+      status: "not_analyzed",
       findings: [],
     },
     integrity: {
-      status: resolved.analyzeIntegrity ? "insufficient_metadata" : "not_analyzed",
+      status: "not_analyzed",
       findings: [],
     },
-    standards: {
-      exif: "unsupported",
-      xmp: "unsupported",
-      iptc: "unsupported",
-      icc: "unsupported",
-      jfif: "unsupported",
-    },
+    standards: canonical.standards,
     provenance: {
       c2pa: {
-        status: resolved.detectProvenance ? "unsupported" : "not_checked",
+        status: "not_checked",
         verification: "not_attempted",
       },
     },
-    warnings: [
-      {
-        code: "METADATA_ADAPTERS_NOT_CONNECTED",
-        message: "Format inspection is active; metadata adapters are not connected yet.",
-      },
-    ],
+    warnings: extraction.warnings,
   };
 
-  if (resolved.includeRaw) result.raw = {};
+  if (resolved.includeRaw) result.raw = canonical.raw;
   return result;
 }
 
 function assertNotAborted(signal: AbortSignal | undefined): void {
   if (signal?.aborted) {
-    throw new InspectionError(INSPECTION_ERROR_CODES.ABORTED, "Image inspection was aborted.");
+    throw new InspectionError(
+      INSPECTION_ERROR_CODES.ABORTED,
+      "Image inspection was aborted.",
+    );
   }
 }
