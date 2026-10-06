@@ -6,6 +6,8 @@ import { INSPECTION_ERROR_CODES } from "./errors/error-codes.js";
 import { InspectionError } from "./errors/inspection-error.js";
 import { detectFormat } from "./formats/detect-format.js";
 import { detectIsoBmffDimensions } from "./formats/isobmff.js";
+import { detectJpegDimensions } from "./formats/jpeg.js";
+import { detectPngDimensions } from "./formats/png.js";
 import { normalizeInput } from "./input/normalize-input.js";
 import type {
   ImageInput,
@@ -49,11 +51,15 @@ export async function inspectImage(
 
   const canonical = normalizeExtractions(extraction.results);
   const structuralDimensions =
-    detected.format === "heic" ||
-    detected.format === "heif" ||
-    detected.format === "avif"
-      ? detectIsoBmffDimensions(normalized.bytes)
-      : null;
+    detected.format === "jpeg"
+      ? detectJpegDimensions(normalized.bytes)
+      : detected.format === "png"
+        ? detectPngDimensions(normalized.bytes)
+        : detected.format === "heic" ||
+            detected.format === "heif" ||
+            detected.format === "avif"
+          ? detectIsoBmffDimensions(normalized.bytes)
+          : null;
 
   const image = {
     ...canonical.image,

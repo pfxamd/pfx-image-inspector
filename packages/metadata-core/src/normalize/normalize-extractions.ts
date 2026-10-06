@@ -55,7 +55,7 @@ export function normalizeExtractions(
   const cameraSource = mergeRecords(sources.image, sources.photo);
 
   return {
-    image: normalizeImage(imageSource),
+    image: normalizeImage(imageSource, sources.jfif ?? {}),
     camera: normalizeCamera(cameraSource),
     location: normalizeLocation(sources.gps ?? {}),
     color: normalizeColor(mergeRecords(sources.photo, sources.icc)),
@@ -114,7 +114,10 @@ function resolveStatus(
   return "malformed";
 }
 
-function normalizeImage(source: Record<string, unknown>): ImageInfo {
+function normalizeImage(
+  source: Record<string, unknown>,
+  jfif: Record<string, unknown>,
+): ImageInfo {
   return {
     width: firstNumber(source, [
       "ImageWidth",
@@ -131,7 +134,7 @@ function normalizeImage(source: Record<string, unknown>): ImageInfo {
       "height",
     ]),
     orientation: normalizeOrientation(firstValue(source, ["Orientation"])),
-    dpi: normalizeDpi(source),
+    dpi: normalizeDpi(source, jfif),
     bitDepth: normalizeBitDepth(firstValue(source, ["BitDepth", "BitsPerSample"])),
   };
 }
@@ -160,8 +163,10 @@ function normalizeLocation(source: Record<string, unknown>): LocationInfo | null
   );
 
   let altitude = firstNumber(source, ["GPSAltitude", "altitude"]);
-  const altitudeRef = firstNumber(source, ["GPSAltitudeRef"]);
-  if (altitude !== null && altitudeRef === 1) altitude = -Math.abs(altitude);
+  const altitudeRef = firstValue(source, ["GPSAltitudeRef"]);
+  if (altitude !== null && isBelowSeaLevel(altitudeRef)) {
+    altitude = -Math.abs(altitude);
+  }
 
   if (latitude === null && longitude === null && altitude === null) return null;
   return { latitude, longitude, altitude };
@@ -258,14 +263,25 @@ function normalizeOrientation(value: unknown): number | null {
   return null;
 }
 
-function normalizeDpi(source: Record<string, unknown>): ImageInfo["dpi"] {
+function normalizeDpi(
+  source: Record<string, unknown>,
+  jfif: Record<string, unknown>,
+): ImageInfo["dpi"] {
   let x = firstNumber(source, ["XResolution"]);
   let y = firstNumber(source, ["YResolution"]);
+  let unit = firstValue(source, ["ResolutionUnit"]);
+
+  if (x === null && y === null) {
+    x = firstNumber(jfif, ["XResolution"]);
+    y = firstNumber(jfif, ["YResolution"]);
+    unit = firstValue(jfif, ["ResolutionUnit"]);
+  }
+
   if (x === null && y === null) return null;
 
-  const unit = firstValue(source, ["ResolutionUnit"]);
   if (
     unit === 3 ||
+    unit === 2 ||
     (typeof unit === "string" && unit.toLowerCase().includes("cm"))
   ) {
     if (x !== null) x *= 2.54;
@@ -273,6 +289,24 @@ function normalizeDpi(source: Record<string, unknown>): ImageInfo["dpi"] {
   }
 
   return { x, y };
+}
+
+function isBelowSeaLevel(value: unknown): boolean {
+  if (value === 1) return true;
+
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+    return (
+      normalized === "1" ||
+      normalized.includes("below") ||
+      normalized.includes("negative")
+    );
+  }
+
+  if (value instanceof Uint8Array) return value[0] === 1;
+  if (Array.isArray(value)) return value[0] === 1;
+
+  return false;
 }
 
 function normalizeBitDepth(value: unknown): number | null {
