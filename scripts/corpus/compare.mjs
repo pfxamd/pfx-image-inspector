@@ -208,7 +208,42 @@ for (const sample of samples) {
   }
 }
 
-if (summary.inspectionFailures > 0) process.exitCode = 1;
+const qualityFailures = [];
+
+if (summary.inspectionFailures > 0) {
+  qualityFailures.push("inspection failures detected");
+}
+if (summary.completeness < 0.998) {
+  qualityFailures.push(
+    `overall completeness below 99.8%: ${summary.completeness}`,
+  );
+}
+if (summary.agreement < 0.999) {
+  qualityFailures.push(
+    `overall agreement below 99.9%: ${summary.agreement}`,
+  );
+}
+
+for (const [format, stats] of Object.entries(byFormat)) {
+  if (stats.completeness < 0.99) {
+    qualityFailures.push(
+      `${format} completeness below 99%: ${stats.completeness}`,
+    );
+  }
+  if (stats.agreement < 0.99) {
+    qualityFailures.push(
+      `${format} agreement below 99%: ${stats.agreement}`,
+    );
+  }
+}
+
+if (qualityFailures.length > 0) {
+  console.error(
+    "Reference corpus quality gate failed:\n" +
+      qualityFailures.map((failure) => `- ${failure}`).join("\n"),
+  );
+  process.exitCode = 1;
+}
 
 function createTotals() {
   return {
@@ -264,6 +299,10 @@ function equivalent(name, expected, actual) {
     return Math.abs(expected - actual) <= tolerance;
   }
 
+  if (name === "ISO") {
+    return normalizeIso(expected) === normalizeIso(actual);
+  }
+
   if (name === "FileType") {
     return normalizeFileType(expected) === normalizeFileType(actual);
   }
@@ -287,6 +326,22 @@ function equivalent(name, expected, actual) {
 
   return String(expected).trim().toLowerCase() ===
     String(actual).trim().toLowerCase();
+}
+
+function normalizeIso(value) {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+
+  const candidates = String(value)
+    .trim()
+    .split(/[\s,;]+/)
+    .map((item) => Number(item))
+    .filter((item) => Number.isFinite(item));
+
+  return (
+    candidates.find((item) => item > 0) ??
+    candidates[0] ??
+    null
+  );
 }
 
 function normalizeFileType(value) {

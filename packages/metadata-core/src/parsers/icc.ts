@@ -110,7 +110,9 @@ function parseDesc(
   const length = readU32BE(bytes, offset + 8);
   if (length === 0 || offset + 12 + length > offset + size) return null;
 
-  const text = ascii(bytes, offset + 12, offset + 12 + length - 1).trim();
+  const text = ascii(bytes, offset + 12, offset + 12 + length)
+    .replace(/\0+$/g, "")
+    .trim();
   return text.length > 0 ? text : null;
 }
 
@@ -159,7 +161,9 @@ function parseMluc(
       chars.push(((bytes[cursor] ?? 0) << 8) | (bytes[cursor + 1] ?? 0));
     }
 
-    const text = String.fromCharCode(...chars).trim();
+    const text = String.fromCharCode(...chars)
+      .replace(/\0+$/g, "")
+      .trim();
     if (text.length > 0) records.push({ language, country, text });
   }
 

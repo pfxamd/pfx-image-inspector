@@ -39,3 +39,15 @@ images, all eight EXIF orientation values, and malformed/edge-case files.
 Robustness samples are successful when PFx either completes inspection safely
 or returns a controlled error. They do not contribute to metadata
 completeness/agreement scores.
+
+## Known coverage gap
+
+The current corpus contains one field that PFx intentionally does not recover
+yet: ISO from a Canon PowerShot S40 MakerNote in `jpeg-img1771`.
+
+The file has no standard EXIF ISO tag. ExifTool derives ISO from Canon-specific
+MakerNotes. PFx does not claim generic MakerNote interpretation until a
+vendor-aware parser is implemented and validated.
+
+This known gap remains in the completeness score instead of being excluded from
+the benchmark.
