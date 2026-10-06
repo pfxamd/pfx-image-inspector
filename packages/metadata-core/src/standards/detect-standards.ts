@@ -92,15 +92,30 @@ function normalizeExifVersion(value: unknown): string | null {
   const raw = toAscii(value);
   if (raw === null) return null;
 
-  const digits = raw.replace(/[^0-9]/g, "");
-  if (digits.length !== 4) return raw.trim() || null;
+  const trimmed = raw.trim();
+  if (trimmed.length === 0) return null;
 
-  const major = Number.parseInt(digits.slice(0, 2), 10);
-  const minorRaw = digits.slice(2);
-  if (!Number.isFinite(major)) return raw.trim() || null;
+  const dotted = /^(\d+)\.(\d+)$/.exec(trimmed);
+  if (dotted) {
+    return formatVersionParts(dotted[1] ?? "", dotted[2] ?? "");
+  }
 
-  const minor = minorRaw === "00" ? "0" : minorRaw.replace(/0+$/, "");
-  return `${major}.${minor || "0"}`;
+  const digits = trimmed.replace(/[^0-9]/g, "");
+  if (digits.length === 4) {
+    return formatVersionParts(digits.slice(0, 2), digits.slice(2));
+  }
+
+  if (digits.length === 3) {
+    return formatVersionParts(digits.slice(0, 1), digits.slice(1));
+  }
+
+  return trimmed;
+}
+
+function formatVersionParts(majorRaw: string, minorRaw: string): string {
+  const major = Number.parseInt(majorRaw, 10);
+  const minor = minorRaw.replace(/0+$/, "") || "0";
+  return `${Number.isFinite(major) ? major : majorRaw}.${minor}`;
 }
 
 function normalizeSimpleVersion(value: unknown): string | null {

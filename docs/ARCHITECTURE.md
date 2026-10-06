@@ -61,7 +61,8 @@ The implementation now includes:
 - adapter registry
 - exifr adapter for supported image containers
 - native WebP RIFF metadata adapter
-- canonical metadata normalization
+- native ISO BMFF spatial-dimension detection for HEIC/HEIF/AVIF
+- canonical metadata normalization with source-aware timestamp priority
 - structured metadata statuses
 - standards detection with embedded version evidence where available
 - explainable privacy analysis

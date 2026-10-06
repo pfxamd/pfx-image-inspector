@@ -5,6 +5,7 @@ import type { InspectionContext } from "./adapters/adapter.js";
 import { INSPECTION_ERROR_CODES } from "./errors/error-codes.js";
 import { InspectionError } from "./errors/inspection-error.js";
 import { detectFormat } from "./formats/detect-format.js";
+import { detectIsoBmffDimensions } from "./formats/isobmff.js";
 import { normalizeInput } from "./input/normalize-input.js";
 import type {
   ImageInput,
@@ -47,6 +48,18 @@ export async function inspectImage(
   assertNotAborted(options.signal);
 
   const canonical = normalizeExtractions(extraction.results);
+  const structuralDimensions =
+    detected.format === "heic" ||
+    detected.format === "heif" ||
+    detected.format === "avif"
+      ? detectIsoBmffDimensions(normalized.bytes)
+      : null;
+
+  const image = {
+    ...canonical.image,
+    width: structuralDimensions?.width ?? canonical.image.width,
+    height: structuralDimensions?.height ?? canonical.image.height,
+  };
 
   const result: ImageInspectionResult = {
     schemaVersion: SCHEMA_VERSION,
@@ -58,7 +71,7 @@ export async function inspectImage(
       declaredMime: normalized.declaredMime,
       size: normalized.size,
     },
-    image: canonical.image,
+    image,
     camera: canonical.camera,
     location: canonical.location,
     color: canonical.color,
@@ -78,7 +91,7 @@ export async function inspectImage(
         },
     integrity: resolved.analyzeIntegrity
       ? analyzeIntegrity({
-          image: canonical.image,
+          image,
           location: canonical.location,
           timestamps: canonical.timestamps,
           metadata: canonical.metadata,

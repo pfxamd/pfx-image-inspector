@@ -59,9 +59,12 @@ export function normalizeExtractions(
     camera: normalizeCamera(cameraSource),
     location: normalizeLocation(sources.gps ?? {}),
     color: normalizeColor(mergeRecords(sources.photo, sources.icc)),
-    timestamps: normalizeTimestamps(
-      mergeRecords(sources.image, sources.photo, sources.xmp),
-    ),
+    timestamps: normalizeTimestamps({
+      image: sources.image ?? {},
+      photo: sources.photo ?? {},
+      xmp: sources.xmp ?? {},
+      iptc: sources.iptc ?? {},
+    }),
     software: normalizeSoftware(
       mergeRecords(sources.image, sources.photo, sources.xmp),
     ),
@@ -166,7 +169,9 @@ function normalizeLocation(source: Record<string, unknown>): LocationInfo | null
 
 function normalizeColor(source: Record<string, unknown>): ColorInfo | null {
   const color: ColorInfo = {
-    colorSpace: findDeepString(source, ["ColorSpace", "ColorSpaceData"]),
+    colorSpace: normalizeColorSpace(
+      findDeepValue(source, ["ColorSpace", "ColorSpaceData"]),
+    ),
     profileName: findDeepString(source, [
       "ProfileDescription",
       "ProfileName",
@@ -177,11 +182,29 @@ function normalizeColor(source: Record<string, unknown>): ColorInfo | null {
   return color.colorSpace === null && color.profileName === null ? null : color;
 }
 
-function normalizeTimestamps(source: Record<string, unknown>): TimestampInfo {
+interface TimestampSources {
+  image: Record<string, unknown>;
+  photo: Record<string, unknown>;
+  xmp: Record<string, unknown>;
+  iptc: Record<string, unknown>;
+}
+
+function normalizeTimestamps(source: TimestampSources): TimestampInfo {
   return {
-    takenAt: firstDate(source, ["DateTimeOriginal", "DateCreated"]),
-    digitizedAt: firstDate(source, ["CreateDate", "DateTimeDigitized"]),
-    modifiedAt: firstDate(source, ["ModifyDate", "DateTime"]),
+    takenAt: firstDateFromSources([
+      [source.photo, ["DateTimeOriginal"]],
+      [source.xmp, ["DateTimeOriginal", "DateCreated"]],
+      [source.iptc, ["DateCreated"]],
+    ]),
+    digitizedAt: firstDateFromSources([
+      [source.photo, ["CreateDate", "DateTimeDigitized"]],
+      [source.xmp, ["CreateDate", "DateTimeDigitized", "DigitalCreationDate"]],
+      [source.iptc, ["DigitalCreationDate"]],
+    ]),
+    modifiedAt: firstDateFromSources([
+      [source.image, ["ModifyDate", "DateTime"]],
+      [source.xmp, ["ModifyDate", "MetadataDate"]],
+    ]),
   };
 }
 
@@ -322,21 +345,94 @@ function firstString(
     : null;
 }
 
-function firstDate(
-  source: Record<string, unknown>,
-  keys: readonly string[],
+function firstDateFromSources(
+  candidates: ReadonlyArray<
+    readonly [Record<string, unknown>, readonly string[]]
+  >,
 ): string | null {
-  const value = firstValue(source, keys);
-
-  if (value instanceof Date && !Number.isNaN(value.getTime())) {
-    return value.toISOString();
-  }
-
-  if (typeof value === "string" && value.trim().length > 0) {
-    return value.trim();
+  for (const [source, keys] of candidates) {
+    const value = findDeepValue(source, keys);
+    const normalized = normalizeDateValue(value);
+    if (normalized !== null) return normalized;
   }
 
   return null;
+}
+
+function normalizeDateValue(value: unknown): string | null {
+  if (value instanceof Date && !Number.isNaN(value.getTime())) {
+    return formatFloatingDate(value);
+  }
+
+  if (typeof value !== "string" || value.trim().length === 0) return null;
+
+  const raw = value.trim();
+  const exif = /^(\d{4})[:\-](\d{2})[:\-](\d{2})[ T](\d{2}):(\d{2}):(\d{2})(.*)$/.exec(raw);
+
+  if (exif) {
+    const [, year, month, day, hour, minute, second, suffixRaw] = exif;
+    const suffix = (suffixRaw ?? "").trim();
+
+    if (suffix === "" || suffix.toUpperCase() === "UTC") {
+      return `${year}-${month}-${day}T${hour}:${minute}:${second}${suffix ? "Z" : ""}`;
+    }
+
+    if (/^[+-]\d{2}:?\d{2}$/.test(suffix)) {
+      const normalizedOffset =
+        suffix.includes(":")
+          ? suffix
+          : `${suffix.slice(0, 3)}:${suffix.slice(3)}`;
+      return `${year}-${month}-${day}T${hour}:${minute}:${second}${normalizedOffset}`;
+    }
+  }
+
+  return raw;
+}
+
+function formatFloatingDate(value: Date): string {
+  const pad = (part: number): string => String(part).padStart(2, "0");
+
+  return (
+    `${value.getFullYear()}-${pad(value.getMonth() + 1)}-${pad(value.getDate())}` +
+    `T${pad(value.getHours())}:${pad(value.getMinutes())}:${pad(value.getSeconds())}`
+  );
+}
+
+function normalizeColorSpace(value: unknown): string | null {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    if (value === 1) return "sRGB";
+    if (value === 65535) return "Uncalibrated";
+    return String(value);
+  }
+
+  if (typeof value !== "string") return null;
+
+  const normalized = value.trim();
+  if (normalized.length === 0) return null;
+  if (normalized === "1") return "sRGB";
+  if (normalized === "65535") return "Uncalibrated";
+  if (normalized === "RGB") return "RGB";
+  return normalized;
+}
+
+function findDeepValue(
+  source: Record<string, unknown>,
+  keys: readonly string[],
+  depth = 0,
+): unknown {
+  if (depth > 6) return undefined;
+
+  for (const key of keys) {
+    if (source[key] !== undefined && source[key] !== null) return source[key];
+  }
+
+  for (const value of Object.values(source)) {
+    if (!isRecord(value)) continue;
+    const found = findDeepValue(value, keys, depth + 1);
+    if (found !== undefined && found !== null) return found;
+  }
+
+  return undefined;
 }
 
 function findDeepString(
@@ -346,17 +442,10 @@ function findDeepString(
 ): string | null {
   if (depth > 5) return null;
 
-  const direct = firstString(source, keys);
-  if (direct !== null) return direct;
-
-  for (const value of Object.values(source)) {
-    if (isRecord(value)) {
-      const found = findDeepString(value, keys, depth + 1);
-      if (found !== null) return found;
-    }
-  }
-
-  return null;
+  const value = findDeepValue(source, keys, depth);
+  return typeof value === "string" && value.trim().length > 0
+    ? value.trim()
+    : null;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

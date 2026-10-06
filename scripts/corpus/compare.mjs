@@ -175,6 +175,10 @@ function equivalent(name, expected, actual) {
     return normalizeVersion(expected) === normalizeVersion(actual);
   }
 
+  if (name === "ColorSpace") {
+    return normalizeColorSpace(expected) === normalizeColorSpace(actual);
+  }
+
   if (name.endsWith("Date") || name.includes("Time")) {
     return normalizeDate(expected) === normalizeDate(actual);
   }
@@ -184,21 +188,39 @@ function equivalent(name, expected, actual) {
 }
 
 function normalizeVersion(value) {
-  const raw = String(value).replace(/[^0-9]/g, "");
-  if (raw.length === 4) {
-    const major = Number.parseInt(raw.slice(0, 2), 10);
-    const minor = raw.slice(2).replace(/0+$/, "") || "0";
-    return `${major}.${minor}`;
-  }
-  return String(value).trim();
+  const text = String(value).trim();
+  const dotted = /^(\d+)\.(\d+)$/.exec(text);
+  if (dotted) return formatVersion(dotted[1], dotted[2]);
+
+  const raw = text.replace(/[^0-9]/g, "");
+  if (raw.length === 4) return formatVersion(raw.slice(0, 2), raw.slice(2));
+  if (raw.length === 3) return formatVersion(raw.slice(0, 1), raw.slice(1));
+  return text;
+}
+
+function formatVersion(majorRaw, minorRaw) {
+  const major = Number.parseInt(majorRaw, 10);
+  const minor = minorRaw.replace(/0+$/, "") || "0";
+  return `${Number.isFinite(major) ? major : majorRaw}.${minor}`;
+}
+
+function normalizeColorSpace(value) {
+  const text = String(value).trim().toLowerCase();
+  if (text === "1" || text === "srgb") return "srgb";
+  if (text === "65535" || text === "uncalibrated") return "uncalibrated";
+  return text.replace(/\s+/g, " ");
 }
 
 function normalizeDate(value) {
-  if (value instanceof Date) return value.toISOString();
   const raw = String(value).trim();
-  const parsed = Date.parse(raw);
-  if (!Number.isNaN(parsed)) return new Date(parsed).toISOString();
-  return raw.replace(/:/g, "-").replace(/\s+/g, " ");
+  const match =
+    /^(\d{4})[:\-](\d{2})[:\-](\d{2})[ T](\d{2}):(\d{2}):(\d{2})/.exec(raw);
+
+  if (match) {
+    return `${match[1]}-${match[2]}-${match[3]}T${match[4]}:${match[5]}:${match[6]}`;
+  }
+
+  return raw.replace(/\s+/g, " ");
 }
 
 function round(value) {

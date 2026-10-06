@@ -33,7 +33,7 @@ describe("metadata normalization", () => {
           FocalLength: 50,
           ExposureTime: 0.008,
           DateTimeOriginal: new Date("2026-01-02T03:04:05Z"),
-          ColorSpace: "sRGB",
+          ColorSpace: 1,
         },
         gps: {
           latitude: 35.57,
@@ -80,7 +80,7 @@ describe("metadata normalization", () => {
       colorSpace: "sRGB",
       profileName: "sRGB IEC61966-2.1",
     });
-    expect(result.timestamps.takenAt).toBe("2026-01-02T03:04:05.000Z");
+    expect(result.timestamps.takenAt).toBe("2026-01-02T03:04:05");
     expect(result.metadata.exif.status).toBe("present");
     expect(result.metadata.xmp.status).toBe("present");
     expect(result.metadata.iptc.status).toBe("present");
