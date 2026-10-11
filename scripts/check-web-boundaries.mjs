@@ -20,6 +20,12 @@ for (const absolute of sourceFiles) {
     );
   }
 
+  if (source.includes("@pfxamd/raster-core") && path !== "workers/raster-cross-check.ts") {
+    violations.push(
+      `${path}: Raster Core must run only in the dedicated worker integration`,
+    );
+  }
+
   if (
     /\binspectImage\s*\(/.test(source) &&
     path !== "workers/metadata.worker.ts"

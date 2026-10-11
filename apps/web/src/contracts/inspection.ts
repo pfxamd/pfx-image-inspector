@@ -6,7 +6,21 @@ import type {
 } from "@pfx/metadata-core";
 
 export type ImageInput = CoreImageInput;
-export type ImageInspectionResult = CoreImageInspectionResult;
+export interface RasterVerification {
+  readonly status: "checked" | "unsupported" | "skipped" | "unavailable";
+  readonly agreement: "match" | "mismatch" | "not_comparable" | null;
+  readonly format: string | null;
+  readonly width: number | null;
+  readonly height: number | null;
+  readonly hasAlpha: boolean | null;
+  readonly hasIccProfile: boolean | null;
+  readonly detail: string;
+}
+
+/** App-layer advisory field; the original metadata-core schema stays unchanged. */
+export type ImageInspectionResult = CoreImageInspectionResult & {
+  readonly raster?: RasterVerification;
+};
 export type InspectOptions = CoreInspectOptions;
 export type MetadataStatus = CoreMetadataStatus;
 

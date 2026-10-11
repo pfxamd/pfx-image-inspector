@@ -22,9 +22,13 @@ Web Worker
 @pfx/metadata-core
 ```
 
-The main browser thread does not execute `metadata-core`.
+The main browser thread does not execute `metadata-core` or `@pfxamd/raster-core`.
+The existing metadata worker optionally requests a bounded, independent raster
+header/decode check from Raster Core after canonical metadata extraction.
+Raster errors do not fail the authoritative metadata result.
 
-Only the dedicated worker may import the core at runtime. The web layer may
+Only the dedicated worker may import the core at runtime. Raster Core is
+imported lazily through `workers/raster-cross-check.ts`, never from UI code. The web layer may
 use type-only contracts so that the UI remains strongly typed without bundling
 the inspection engine into the main-thread application code.
 
@@ -61,6 +65,11 @@ reset. It must not parse metadata.
 `services/`
 owns the main-thread abstraction used by React. The UI talks to the
 `InspectionService` interface rather than to the core.
+
+`workers/`
+may call both the authoritative metadata core and an independent advisory
+raster validator. The latter supports still JPEG/PNG/WebP only and skips
+inputs over 8 MiB to avoid unnecessary memory allocations.
 
 `workers/`
 owns cross-thread messaging. The metadata worker is the only web runtime module

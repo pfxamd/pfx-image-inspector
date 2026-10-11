@@ -27,3 +27,18 @@ plus separate robustness cases for malformed inputs.
 ## License
 
 Apache-2.0
+
+## Independent Raster Core second opinion
+
+The browser metadata worker optionally uses the independently pinned Raster Core
+0.5.0-alpha.6 after metadata parsing, for still JPEG/PNG/WebP files up to
+8 MiB. It compares independently inspected dimensions and format when
+orientation permits, and adds alpha-channel presence information to the
+existing Color → Raster panel.
+
+This is an **advisory cross-check**, not evidence of image authenticity.
+It does not overwrite or weaken metadata-core results. Animated images,
+unsupported formats, oversized files or pixel decode failures yield explicit
+skipped/unavailable status. The original EXIF/XMP, privacy/integrity, ICC and
+C2PA inspection continues to function independently. No images or metadata
+are uploaded by this feature.

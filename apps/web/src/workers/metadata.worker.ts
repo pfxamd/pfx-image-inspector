@@ -2,6 +2,7 @@ import {
   InspectionError,
   inspectImage,
 } from "@pfx/metadata-core";
+import { crossCheckRaster } from "./raster-cross-check.js";
 import type {
   MetadataWorkerRequest,
   MetadataWorkerResponse,
@@ -37,10 +38,15 @@ async function handleInspection(
   active.set(message.requestId, controller);
 
   try {
-    const result = await inspectImage(message.input, {
+    const base = await inspectImage(message.input, {
       ...message.options,
       signal: controller.signal,
     });
+    // Advisory second opinion only. Does not mutate the metadata engine's
+    // canonical result and cannot fail the existing metadata inspection.
+    const raster = await crossCheckRaster(message.input, base, controller.signal);
+    if (controller.signal.aborted) return;
+    const result = { ...base, raster };
 
     scope.postMessage({
       type: "result",
