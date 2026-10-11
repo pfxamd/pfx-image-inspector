@@ -34,7 +34,7 @@ export function SourcePanel({
   const result = state.result;
 
   return (
-    <aside className="source-column" aria-label="Source image">
+    <aside className="source-column" aria-label="Source image" data-has-file={hasFile}>
       <div className="section-kicker">
         <span>SOURCE</span>
         {hasFile ? <span>01</span> : <span>EMPTY</span>}
@@ -61,8 +61,14 @@ export function SourcePanel({
         ) : (
           <div className="source-empty">
             <span className="source-empty__cross" aria-hidden="true" />
-            <strong>DROP AN IMAGE</strong>
-            <small>OR CLICK TO INSPECT</small>
+            <strong>
+              <span className="source-prompt--desktop">DROP AN IMAGE</span>
+              <span className="source-prompt--mobile">SELECT AN IMAGE</span>
+            </strong>
+            <small>
+              <span className="source-prompt--desktop">OR CLICK TO INSPECT</span>
+              <span className="source-prompt--mobile">TAP TO CHOOSE A FILE</span>
+            </small>
           </div>
         )}
 

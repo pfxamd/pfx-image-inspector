@@ -98,3 +98,60 @@ function writeAscii(
     bytes[offset + index] = value.charCodeAt(index);
   }
 }
+
+
+for (const width of [320, 390, 768]) {
+  test(`mobile workspace supports image inspection at ${width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height: 780 });
+    await page.goto("/");
+
+    await expect(page.getByText("SELECT AN IMAGE")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Open Image" })).toBeVisible();
+
+    const layout = await page.evaluate(() => ({
+      minWidth: getComputedStyle(document.body).minWidth,
+      documentWidth: document.documentElement.scrollWidth,
+      viewportWidth: document.documentElement.clientWidth,
+      cards: Array.from(document.querySelectorAll(".source-column, .inspector")).map(
+        (element) => element.getBoundingClientRect().width,
+      ),
+    }));
+
+    expect(layout.minWidth).toBe("0px");
+    expect(layout.documentWidth).toBeLessThanOrEqual(layout.viewportWidth);
+    for (const cardWidth of layout.cards) {
+      expect(cardWidth).toBeLessThanOrEqual(layout.viewportWidth);
+    }
+
+    await page.locator('input[type="file"]').setInputFiles({
+      name: "mobile-inspection.webp",
+      mimeType: "image/webp",
+      buffer: Buffer.from(createSmallWebP(123, 77)),
+    });
+
+    await expect(page.getByText("INSPECTION COMPLETE")).toBeVisible();
+    await expect(page.locator(".inspector-sections button", { hasText: "Metadata" })).toBeEnabled();
+
+    await page.locator(".inspector-sections button", { hasText: "Metadata" }).click();
+    await expect(page.getByText("Metadata structure")).toBeVisible();
+
+    const overflowAfterInspection = await page.evaluate(() => ({
+      documentWidth: document.documentElement.scrollWidth,
+      viewportWidth: document.documentElement.clientWidth,
+      documentHeight: document.documentElement.scrollHeight,
+      viewportHeight: document.documentElement.clientHeight,
+    }));
+
+    expect(overflowAfterInspection.documentWidth).toBeLessThanOrEqual(
+      overflowAfterInspection.viewportWidth,
+    );
+    expect(overflowAfterInspection.documentHeight).toBeGreaterThan(
+      overflowAfterInspection.viewportHeight,
+    );
+
+    await page.getByRole("button", { name: "Release" }).click();
+    await expect(page.getByText("SELECT AN IMAGE")).toBeVisible();
+  });
+}

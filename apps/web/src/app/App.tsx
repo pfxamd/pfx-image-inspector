@@ -60,10 +60,26 @@ export function App() {
       state.status === "ready"
     ) {
       setStreamCycle((cycle) => cycle + 1);
+      if (window.matchMedia("(max-width: 859px)").matches) {
+        window.requestAnimationFrame(() => {
+          document.querySelector(".inspector")?.scrollIntoView({
+            block: "start",
+          });
+        });
+      }
     }
 
     previousStatus.current = state.status;
   }, [state.status]);
+
+  const changeTab = useCallback((tab: InspectorTab) => {
+    setActiveTab(tab);
+    if (window.matchMedia("(max-width: 859px)").matches) {
+      document.querySelector(".inspector")?.scrollIntoView({
+        block: "start",
+      });
+    }
+  }, []);
 
   const openPicker = useCallback(() => {
     inputRef.current?.click();
@@ -223,7 +239,7 @@ export function App() {
           <InspectorPanel
             state={state}
             activeTab={activeTab}
-            onTabChange={setActiveTab}
+            onTabChange={changeTab}
             onOpen={openPicker}
           />
         </div>
