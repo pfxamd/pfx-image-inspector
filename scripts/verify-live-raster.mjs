@@ -38,7 +38,7 @@ try {
   });
   await page.locator(".inspector-sections button", { hasText: "Color" }).click();
   await expect(page.getByText("Raster check", { exact: true })).toBeVisible();
-  await expect(page.getByText("Independent match", { exact: true })).toBeVisible();
+  await expect(page.getByText("Header match", { exact: true })).toBeVisible();
   await expect(page.getByText("Alpha channel", { exact: true })).toBeVisible();
   const width = await page.evaluate(() => ({
     document: document.documentElement.scrollWidth,
@@ -47,7 +47,7 @@ try {
   if (width.document > width.viewport) throw new Error("Mobile horizontal overflow");
   if (pageErrors.length > 0) throw new Error("Published page script errors: " + pageErrors.join("; "));
   console.log("PUBLISHED_RASTER_INSPECTION_VERIFIED", JSON.stringify({
-    url, width: 390, image: "137x83 PNG", rasterCheck: "Independent match",
+    url, width: 390, image: "137x83 PNG", rasterCheck: "Header match",
     mobileHorizontalOverflow: false,
   }));
 } finally {
