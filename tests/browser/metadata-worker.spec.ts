@@ -193,6 +193,7 @@ test("keeps the main thread responsive while inspecting 32 MiB", async ({
         width: result.image.width,
         height: result.image.height,
         size: result.file.size,
+        rasterStatus: result.raster?.status,
       };
     } finally {
       client.dispose();
@@ -262,6 +263,7 @@ test("keeps the main thread responsive while inspecting 32 MiB", async ({
   expect(metrics.width).toBe(640);
   expect(metrics.height).toBe(480);
   expect(metrics.size).toBeGreaterThan(32 * 1024 * 1024);
+  expect(metrics.rasterStatus).toBe("skipped");
   expect(metrics.durationMs).toBeLessThan(15_000);
   expect(metrics.ticks > 0 || metrics.durationMs < 50).toBe(true);
 });
