@@ -441,6 +441,26 @@ function ColorView({ result }: { result: ImageInspectionResult }) {
             label="Dimensions"
             value={formatDimensions(result.image)}
           />
+          <DataRow
+            label="Raster check"
+            value={result.raster?.status === "checked"
+              ? result.raster.agreement === "match"
+                ? "Independent match"
+                : result.raster.agreement === "mismatch"
+                  ? "Different result"
+                  : "Orientation not compared"
+              : result.raster?.status === "skipped"
+                ? "Skipped (large file)"
+                : result.raster?.status === "unsupported"
+                  ? "Not supported"
+                  : "Not available"}
+          />
+          <DataRow
+            label="Alpha channel"
+            value={result.raster?.hasAlpha === null || result.raster?.hasAlpha === undefined
+              ? "—"
+              : result.raster.hasAlpha ? "Present" : "Not declared"}
+          />
         </DataGroup>
       </div>
     </div>
