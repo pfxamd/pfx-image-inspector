@@ -5,6 +5,8 @@ test("renders the fixed workspace and inspects a source image", async ({
 }) => {
   await page.goto("/");
 
+  await expect(page.locator(".version-badge")).toHaveText(/^ALPHA 0\.1\.\d+$/);
+
   const root = page.locator("html");
   await expect(root).toHaveAttribute("data-theme", "dark");
 

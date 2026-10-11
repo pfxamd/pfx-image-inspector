@@ -157,7 +157,7 @@ export function App() {
           <div className="brand-copy">
             <div className="brand-title-row">
               <div className="brand-name">pfx image inspector</div>
-              <span className="beta-badge">BETA 0.1</span>
+              <span className="version-badge">ALPHA {import.meta.env.VITE_APP_VERSION || "0.1.0"}</span>
             </div>
             <div className="brand-subline">LOCAL IMAGE ANALYSIS</div>
           </div>
