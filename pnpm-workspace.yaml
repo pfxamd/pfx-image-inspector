@@ -4,4 +4,4 @@ packages:
 
 allowBuilds:
   "sharp@0.34.5": true
-  "@pfxamd/raster-core@https://codeload.github.com/pfxamd/pfx-raster-core/tar.gz/3ecdb9f82cc8f5d400a9c6565146b1de6bca09e4": true
+  "@pfxamd/raster-core@https://codeload.github.com/pfxamd/pfx-raster-core/tar.gz/b7aea84e42a3eca31416a72588ea4a9f1c5e4870": true

@@ -14,7 +14,7 @@
     "@pfx/metadata-core": "workspace:*",
     "react": "19.3.0",
     "react-dom": "19.3.0",
-    "@pfxamd/raster-core": "github:pfxamd/pfx-raster-core#3ecdb9f82cc8f5d400a9c6565146b1de6bca09e4"
+    "@pfxamd/raster-core": "github:pfxamd/pfx-raster-core#b7aea84e42a3eca31416a72588ea4a9f1c5e4870"
   },
   "devDependencies": {
     "@types/react": "19.3.0",

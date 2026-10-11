@@ -3,8 +3,8 @@ import type { ImageInspectionResult } from "../contracts/inspection.js";
 const MAX_RASTER_CHECK_BYTES = 8 * 1024 * 1024;
 
 /**
- * Non-authoritative, bounded second opinion. Never replace metadata-core's
- * existing values or fail the metadata inspection because raster decode fails.
+ * Non-authoritative, bounded structural header second opinion. Never replace
+ * metadata-core's existing values or require a decoded bitmap.
  * Raster Core 0.5.x browser inspection supports still JPEG, PNG and WebP only.
  */
 export async function crossCheckRaster(
@@ -40,13 +40,16 @@ export async function crossCheckRaster(
   }
 
   try {
-    const { createRasterCore } = await import("@pfxamd/raster-core/browser");
+    const { inspectRasterHeader } = await import("@pfxamd/raster-core/browser/header");
     if (signal.aborted) return { ...unsupported, status: "skipped", detail: "Raster check cancelled." };
     const bytes = new Uint8Array(input instanceof Blob ? await input.arrayBuffer() : input);
     if (signal.aborted) return { ...unsupported, status: "skipped", detail: "Raster check cancelled." };
 
-    // Only the dedicated metadata worker uses the Raster Core runtime.
-    const image = await createRasterCore().inspect(bytes);
+    // Structural cross-check only. No bitmap decoding or RGBA allocation.
+    // The existing metadata engine retains authority for full metadata parsing.
+    const image = inspectRasterHeader(bytes, {
+      maxInputBytes: MAX_RASTER_CHECK_BYTES,
+    });
     const metadataComparable = result.image.width !== null && result.image.height !== null
       && (result.image.orientation === null || result.image.orientation === 1);
     const agreement = metadataComparable
@@ -66,16 +69,16 @@ export async function crossCheckRaster(
       detail: agreement === "not_comparable"
         ? "Different orientation conventions may apply; dimensions were not compared."
         : agreement === "mismatch"
-          ? "Raster and metadata parsers disagree on format or dimensions."
-          : "Independent raster and metadata parsers agree on format and dimensions.",
+          ? "Raster header and metadata parsers disagree on declared format or dimensions."
+          : "Independent raster header and metadata parsers agree on declared format and dimensions.",
     };
   } catch {
-    // Unsupported animation, browser decoder limitations or broken payload
+    // Unsupported animation, invalid header structure or unreadable payload
     // must never erase a valid metadata result.
     return {
       ...unsupported,
       status: "unavailable",
-      detail: "Independent raster decode was unavailable; metadata results were retained.",
+      detail: "Independent raster header inspection was unavailable; metadata results were retained.",
     };
   }
 }

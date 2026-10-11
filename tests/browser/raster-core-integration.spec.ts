@@ -39,6 +39,40 @@ test("independent Raster Core verifies valid PNG without changing metadata", asy
   expect(typeof result.raster?.hasAlpha).toBe("boolean");
 });
 
+test("large declared dimensions are checked without pixel decoding", async ({page}) => {
+  await page.goto("/");
+  const result = await page.evaluate(async () => {
+    const {inspectImageInWorker, disposeMetadataWorker} = await import(
+      "/src/services/metadata-worker-client.ts"
+    );
+    // Metadata-only WebP VP8L header. The encoded data is intentionally
+    // insufficient to decode pixels: the cross-check MUST remain structural.
+    const width = 6000, height = 4000;
+    const payload = new Uint8Array(5);
+    payload[0] = 0x2f;
+    const bits = ((width - 1) & 0x3fff) | (((height - 1) & 0x3fff) << 14);
+    new DataView(payload.buffer).setUint32(1, bits >>> 0, true);
+    const data = new Uint8Array(12 + 8 + 6);
+    data.set([82,73,70,70],0); // RIFF
+    new DataView(data.buffer).setUint32(4, data.length-8, true);
+    data.set([87,69,66,80,86,80,56,76],8); // WEBP VP8L
+    new DataView(data.buffer).setUint32(16,5,true);
+    data.set(payload,20);
+    try {
+      const item = await inspectImageInWorker(
+        new Blob([data], {type:"image/webp"})
+      );
+      return { raster:item.raster, width:item.image.width, height:item.image.height };
+    } finally { disposeMetadataWorker(); }
+  });
+  expect(result.width).toBe(6000);
+  expect(result.height).toBe(4000);
+  expect(result.raster).toMatchObject({
+    status:"checked",agreement:"match",format:"webp",
+    width:6000,height:4000,
+  });
+});
+
 test("Color tab shows independent raster check with no new UI settings", async ({ page }) => {
   await page.goto("/");
   const png = await page.evaluate(async () => {
@@ -56,6 +90,6 @@ test("Color tab shows independent raster check with no new UI settings", async (
   await expect(page.getByText("INSPECTION COMPLETE")).toBeVisible();
   await page.locator(".inspector-sections button", {hasText:"Color"}).click();
   await expect(page.getByText("Raster check", {exact:true})).toBeVisible();
-  await expect(page.getByText("Independent match", {exact:true})).toBeVisible();
+  await expect(page.getByText("Header match", {exact:true})).toBeVisible();
   await expect(page.getByText("Alpha channel", {exact:true})).toBeVisible();
 });

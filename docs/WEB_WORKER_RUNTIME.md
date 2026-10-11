@@ -11,10 +11,9 @@ MetadataWorkerClient
   ↓
 Dedicated Web Worker
   ↓
-@pfx/metadata-core
-```
+@pfx/metadata-core\n  ↓ (optional)\n@pfxamd/raster-core/browser/header\n```
 
-The UI never imports parser-specific APIs.
+The UI never imports parser-specific APIs. A bounded independent structural\nheader check runs in the same worker after metadata parsing; it does not\ndecode bitmap pixels. This avoids allocating a second RGBA raster and limits\na separate encoded copy to at most 8 MiB (Blob input). Header agreement is\nnot full pixel-stream validation.
 
 ## Input handling
 
