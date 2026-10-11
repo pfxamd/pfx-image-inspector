@@ -31,14 +31,19 @@ Apache-2.0
 ## Independent Raster Core second opinion
 
 The browser metadata worker optionally uses the independently pinned Raster Core
-0.5.0-alpha.6 after metadata parsing, for still JPEG/PNG/WebP files up to
+0.5.0-alpha.7 after metadata parsing, for still JPEG/PNG/WebP files up to
 8 MiB. It compares independently inspected dimensions and format when
 orientation permits, and adds alpha-channel presence information to the
 existing Color → Raster panel.
 
-This is an **advisory cross-check**, not evidence of image authenticity.
+This is an **advisory structural-header cross-check**, not a pixel decode,
+complete-file integrity verification, or evidence of image authenticity.
+The lightweight browser/header subpath is synchronous and avoids additional
+image bitmap decoding or RGBA allocations. The existing metadata parser
+still reads the file, and Blob conversion to encoded bytes may allocate up
+to the configured 8 MiB cap.
 It does not overwrite or weaken metadata-core results. Animated images,
-unsupported formats, oversized files or pixel decode failures yield explicit
+unsupported formats, oversized files or header parsing failures yield explicit
 skipped/unavailable status. The original EXIF/XMP, privacy/integrity, ICC and
 C2PA inspection continues to function independently. No images or metadata
 are uploaded by this feature.
