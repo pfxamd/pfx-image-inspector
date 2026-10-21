@@ -10,3 +10,5 @@ coverage/
 
 fixtures/reference/files/
 fixtures/reference/generated/
+
+/.pfx-release-tools/
