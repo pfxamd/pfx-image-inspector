@@ -1,3 +1,4 @@
+import { resolveRelease } from "../../scripts/pfx-release.mjs";
 import { expect, test } from "@playwright/test";
 
 test("renders the fixed workspace and inspects a source image", async ({
@@ -5,7 +6,7 @@ test("renders the fixed workspace and inspects a source image", async ({
 }) => {
   await page.goto("/");
 
-  await expect(page.locator(".version-badge")).toHaveText(/^ALPHA 0\.1\.\d+$/);
+  await expect(page.locator(".version-badge")).toHaveText(resolveRelease().label);
 
   const root = page.locator("html");
   await expect(root).toHaveAttribute("data-theme", "dark");
