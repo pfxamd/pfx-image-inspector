@@ -24,18 +24,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Resolve app version
-        shell: bash
-        run: |
-          baseline=4e58f544a93ed88985b8fe830efd3cff2004047b
-          git merge-base --is-ancestor "$baseline" HEAD
-          count=$(git rev-list --first-parent --count "$baseline..HEAD")
-          if (( count < 1 )); then
-            echo "No release commit found after baseline" >&2
-            exit 1
-          fi
-          echo "VITE_APP_VERSION=0.1.$((count - 1))" >> "$GITHUB_ENV"
-
       - name: Setup pnpm and Node
         uses: pnpm/setup@v1
         with:

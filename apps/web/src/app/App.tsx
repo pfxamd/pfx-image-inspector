@@ -1,3 +1,5 @@
+declare const __PFX_APP_RELEASE__: { version: string; channel: string; label: string; commit: string };
+
 import {
   useCallback,
   useEffect,
@@ -173,7 +175,7 @@ export function App() {
           <div className="brand-copy">
             <div className="brand-title-row">
               <div className="brand-name">pfx image inspector</div>
-              <span className="version-badge">ALPHA {import.meta.env.VITE_APP_VERSION || "0.1.0"}</span>
+              <span className="version-badge">{__PFX_APP_RELEASE__.label}</span>
             </div>
             <div className="brand-subline">LOCAL IMAGE ANALYSIS</div>
           </div>

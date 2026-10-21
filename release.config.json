@@ -1,0 +1,23 @@
+{
+  "product": "PFx Image Inspector",
+  "channel": "Alpha",
+  "baseline": "b4b3189af95f6628cc60e7a1dadab13e1eec0e5c",
+  "baseVersion": "0.1.5",
+  "sourcePaths": [
+    "src",
+    "app",
+    "apps",
+    "public",
+    "assets",
+    "index.html",
+    "diagnostics",
+    "scripts",
+    "release.config.json",
+    "vite.config.ts",
+    "vite.config.js",
+    "package.json",
+    "package-lock.json",
+    "pnpm-lock.yaml",
+    ".github/workflows"
+  ]
+}
